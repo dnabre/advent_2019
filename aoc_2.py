@@ -1,23 +1,21 @@
-import math
 import sys
 
 # test cases for part 1
-tests_1 = [
-	['1,9,10,3,2,3,11,0,99,30,40,50','3500,9,10,70,2,3,11,0,99,30,40,50'],
-	['1,0,0,0,99', '2,0,0,0,99'],
-	['2,3,0,3,99','2,3,0,6,99'],
-	['2,4,4,5,99,0','2,4,4,5,99,9801'],
-	['1,1,1,4,99,5,6,0,99','30,1,1,4,2,5,6,0,99']
-	]
+TESTS_1 = [['1,9,10,3,2,3,11,0,99,30,40,50', '3500,9,10,70,2,3,11,0,99,30,40,50'],
+           ['1,0,0,0,99', '2,0,0,0,99'],
+           ['2,3,0,3,99', '2,3,0,6,99'],
+           ['2,4,4,5,99,0', '2,4,4,5,99,9801'],
+           ['1,1,1,4,99,5,6,0,99', '30,1,1,4,2,5,6,0,99']]
 
-problem_program = ('1,0,0,3,1,1,2,3,1,3,4,3,1,5,0,3,2,13,1,19,1,10,19,23,1,6,23,27,1,5,27,31,1,10,'
+PROBLEM_PROGRAM = ('1,0,0,3,1,1,2,3,1,3,4,3,1,5,0,3,2,13,1,19,1,10,19,23,1,6,23,27,1,5,27,31,1,10,'
                    '31,35,2,10,35,39,1,39,5,43,2,43,6,47,2,9,47,51,1,51,5,55,1,5,55,59,2,10,59,63,'
-                   '1,5,63,67,1,67,10,71,2,6,71,75,2,6,75,79,1,5,79,83,2,6,83,87,2,13,87,91,1,91,6,'
-                   '95,2,13,95,99,1,99,5,103,2,103,10,107,1,9,107,111,1,111,6,115,1,115,2,119,1,119,'
-                   '10,0,99,2,14,0,0')
+                   '1,5,63,67,1,67,10,71,2,6,71,75,2,6,75,79,1,5,79,83,2,6,83,87,2,13,87,91,1,91,'
+                   '6,95,2,13,95,99,1,99,5,103,2,103,10,107,1,9,107,111,1,111,6,115,1,115,2,119,'
+                   '1,119,10,0,99,2,14,0,0')
+
 
 #specified in part 2
-target_value = 19690720
+TARGET_VALUE = 19690720
 
 
 def add(op1, op2):
@@ -33,7 +31,7 @@ def run_program(program):
 	:return: state of memory when program halts
 	"""
 	pc = 0
-	while(program[pc] != 99 ):
+	while (program[pc] != 99):
 		#bit over engineered...
 		branch = {1: add,
 		          2: multiple,
@@ -75,7 +73,7 @@ def find_inputs(program, target_value):
 def main():
 	print('running examples')
 
-	for t in tests_1:
+	for t in TESTS_1:
 		test_prog = string_to_program(t[0])
 		print('', end='\t')
 		print(test_prog, end=' ')
@@ -92,13 +90,13 @@ def main():
 
 	print('\n\n')
 
-	program = string_to_program(problem_program)
+	program = string_to_program(PROBLEM_PROGRAM)
 	print(program)
 	#changes specified in problem
 	program[1] = 12
 	program[2] = 2
 
-	result =run_program(program)
+	result = run_program(program)
 	print(result)
 	print()
 	print(f'result of program[0]: {result[0]}')
@@ -107,9 +105,9 @@ def main():
 
 	# part 2
 	print('"Part 2:\n')
-	program = string_to_program(problem_program) #get a copy of the original program
-	(noun, verb) = find_inputs(program, target_value)
-	if(noun ==-1):
+	program = string_to_program(PROBLEM_PROGRAM) #get a copy of the original program
+	(noun, verb) = find_inputs(program, TARGET_VALUE)
+	if (noun == -1):
 		print("Target Value not found")
 		sys.exit(-1)
 	answer = 100 * noun + verb
