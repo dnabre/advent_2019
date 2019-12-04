@@ -1,3 +1,3 @@
-import aoc_1
+import aoc_3
 
-aoc_1.main()
+aoc_3.main()
