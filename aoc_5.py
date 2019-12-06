@@ -1,7 +1,7 @@
 from enum import Enum
 import sys
 
-AOC_5_DATA_FILENAME="aoc_5.txt"
+AOC_5_DATA_FILENAME='aoc_5.txt'
 
 
 # test cases for part 1
@@ -70,7 +70,7 @@ def lookup_value(program,pc,p_mode, p_number):
 	elif (p_m == ParamMode.IMMEDIATE_MODE):
 		value = program[pc+p_number]
 	else:
-		raise Exception(f"invalid ParamMode:{p_mode}")
+		raise Exception(f'invalid ParamMode:{p_mode}')
 	return value
 
 
@@ -252,7 +252,7 @@ def run_tests(test_set):
 			print(f'error: expected program output: {test_outputs}')
 
 		if failed:
-			sys.exit("test failed")
+			sys.exit('test failed')
 		else:
 			print(f'\t: correct \t {program_outputs}')
 
@@ -263,16 +263,16 @@ def main():
 		lines = file.readlines()
 		PART_1=[(lines[0],lines[1],PART_1_partial[0][2],PART_1_partial[0][3])]
 		PART_2 = [(lines[2], lines[3], PART_2_partial[0][2], PART_2_partial[0][3])]
-		print("Part 1 Tests")
+		print('Part 1 Tests')
 		run_tests(TESTS_1)
-		print("Part 1 Problem")
+		print('Part 1 Problem')
 		run_tests(PART_1)
 
-		print("Part 2 Tests")
+		print('Part 2 Tests')
 		run_tests(TESTS_2)
-		print("Part 2 Problem")
+		print('Part 2 Problem')
 		run_tests(PART_2)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 	main()
