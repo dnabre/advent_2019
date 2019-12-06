@@ -1,8 +1,8 @@
-import aoc_5
+import aoc_6
 """ This module/file is just to direct execution to the current problem being worked on
 	This is only because of the (apparent) limitations of http://repl.it
 """
 
 
 
-aoc_5.main()
+aoc_6.main()
