@@ -51,7 +51,7 @@ def np_a_2_tuple(np_2d_array):
 
 def get_steps(origin, wire_part):
 	""" Convert a (distance,direction) pair in the set  of points that make up that wire
-		This respresentation is horribly inefficient, but straight forward. 
+		This representation is horribly inefficient, but straight forward.
 		Return the complete wire offset for converting other pieces.
 	"""
 	steps = list()
