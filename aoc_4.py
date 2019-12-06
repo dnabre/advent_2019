@@ -81,9 +81,9 @@ def main():
 	
 
 	count=0
-	(good_number, max ) = RANGE
-	print(f'Part 1: Checking from {good_number} to {max}')
-	while (good_number <=  max):
+	(good_number, max_number ) = RANGE
+	print(f'Part 1: Checking from {good_number} to {max_number}')
+	while (good_number <=  max_number):
 		if(valid(str(good_number))):
 			count= count + 1
 		good_number = good_number + 1	
@@ -92,13 +92,13 @@ def main():
 	print('\n')	
 
 	count=0
-	(good_number, max ) = RANGE
-	print(f'Part 2: Checking from {good_number} to {max}')
-	while (good_number <=  max):
+	(good_number, max_number ) = RANGE
+	print(f'Part 2: Checking from {good_number} to {max_number}')
+	while (good_number <=  max_number):
 		if(valid2(str(good_number))):
 			count= count + 1
-		good_number = good_number + 1	
-	print(f'        Found {count} ' )
+		good_number = good_number + 1
+	print(f'        Found {count} ')
 	
 
 
