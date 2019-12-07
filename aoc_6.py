@@ -10,7 +10,7 @@ AOC_6_TEST_FILENAME = 'aoc_6_test.txt'
 # Part 1 Solution: 247089
 
 
-d_orbits = defaultdict(list)
+
 d_links = defaultdict(list)
 
 
@@ -35,7 +35,7 @@ def read_orbits(filename):
 			else:
 				orbit_data[b] = a
 #				print(f'{b} orbits {a}')
-			d_orbits[a].append(b)
+
 	print(f'{len(orbit_data)} items read')
 	return (you_orbit, santa_orbit, orbit_data)
 
@@ -86,8 +86,6 @@ def search(start,end):
 	return lengths[end]
 
 
-def get_parents(place):
-	return [k for k, v in d_orbits.items() if place in v]
 
 
 
@@ -108,11 +106,9 @@ def main():
 	count = count_all_orbits(orbits)
 	print(f'total orbits: {count}')
 
-	you_p = get_parents('YOU')
-	santa_p = get_parents('SAN')
-	print(you_p)
-	print(santa_p)
-	o_path = search(you_p[0], santa_p[0])
+
+	#o_path = search(you_p[0], santa_p[0])
+	o_path = search(you,santa)
 	print(f"edges between 'YOU''  and  'SAN' : {o_path}")
 
 
