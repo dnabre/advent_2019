@@ -1,4 +1,5 @@
 from enum import Enum
+from queue import Queue
 
 class ParamMode(Enum):
 	POSITION_MODE = 0
@@ -6,9 +7,8 @@ class ParamMode(Enum):
 
 	def __str__(self):
 		if (self == ParamMode.POSITION_MODE): return 'p'
-		if (self == ParamMode.IMMEDIATE_MODE): return 'i'
-		return 'ERROR: INVALID ParamMode'
-
+		elif (self == ParamMode.IMMEDIATE_MODE): return 'i'
+		else: raise TypeError(self)
 
 param_modes = {
 		0: 'p',
@@ -21,29 +21,16 @@ def get_param_modes(instruction):
 	p3_mode = ParamMode(instruction // 10000 %10)
 	return (p1_mode,p2_mode,p3_mode)
 
+class IntCodeMachine:
+	input_queue: Queue
+	output_queue: Queue
 
-
-class IntCode:
-	def __init__(self, initial_state, input_callback, output_callback):
-		self.program = initial_state
+	def __init__(self, initial_state, input_queue, output_queue):
+		self.program = initial_state.copy()
+		self.original_state = initial_state.copy()
 		self.pc = 0
-		self.input_callback = input_callback
-		self.output_callback = output_callback
-
-		# op_code and pc_shift should probably be class variables of some sort?
-		self.op_code = {
-			1: self.add,
-			2: self.multiple,
-			3: self.input,
-			4: self.output,
-			5: self.jump_if_true,
-			6: self.jump_if_false,
-			7: self.less_than,
-			8: self.equals,
-
-			99: self.halt,
-		}
-
+		self.input_queue = input_queue
+		self.output_queue = output_queue
 		self.pc_shift = {
 			self.add: 4,
 			self.multiple: 4,
@@ -55,11 +42,17 @@ class IntCode:
 			self.equals: 4,
 			self.halt: 0
 		}
-
-
-
-
-
+		self.op_code = {
+		1: self.add,
+		2: self.multiple,
+		3: self.input,
+		4: self.output,
+		5: self.jump_if_true,
+		6: self.jump_if_false,
+		7: self.less_than,
+		8: self.equals,
+		99: self.halt,
+		}
 
 	@staticmethod
 	def parse_from_string(s):
@@ -70,10 +63,8 @@ class IntCode:
 			result.append(num)
 		return result
 
-
 	def lookup_value(self, p_mode, p_number):
 		p_m = p_mode[p_number - 1]
-	#	print(f'p_m={p_m, type(p_m)}')
 		if (p_m == ParamMode.POSITION_MODE):
 			loc = self.program[self.pc + p_number]
 			value = self.program[loc]
@@ -81,20 +72,16 @@ class IntCode:
 			value = self.program[self.pc + p_number]
 		else:
 			raise Exception(f'invalid ParamMode:{p_mode}')
-	#	print(f'value={value} \t type(value)={type(value)}')
 		return value
 
 	def add(self, p_modes):
-		print(f'pc = {self.pc}', end='')
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
 		loc = self.program[self.pc + 3]  # location written to will never be in immediate mode
-		#print(f'num_1={num_1,type(num_1)} \t num_1={num_2,type(num_2)}')
 		result = num_1 + num_2
 		self.program[loc] = result
 		self.pc += self.pc_shift[self.add]
-		print(f' new_pc={self.pc}')
-		return []
+		return
 
 	def multiple(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
@@ -103,19 +90,21 @@ class IntCode:
 		result = num_1 * num_2
 		self.program[loc] = result
 		self.pc += self.pc_shift[self.multiple]
-		return []
+		return
 
 	def input(self, p_modes):
 		loc = self.program[self.pc + 1]  # location written to will never be in immediate mode
-		self.program[loc] = self.input_callback()
+		in_value = self.input_queue.get()
+		self.program[loc] = in_value
 		self.pc += self.pc_shift[self.input]
-		return []
+		self.input_queue.task_done()
+		return
 
 	def output(self, p_modes):
 		output_value = self.lookup_value(p_modes, 1)
-		out_value = output_value
+		self.output_queue.put_nowait(output_value)
 		self.pc += self.pc_shift[self.output]
-		return [out_value]
+		return
 
 	def jump_if_true(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
@@ -124,7 +113,7 @@ class IntCode:
 			self.pc = num_2
 		else:
 			self.pc += self.pc_shift[self.jump_if_true]
-		return []
+		return
 
 	def jump_if_false(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
@@ -133,7 +122,7 @@ class IntCode:
 			self.pc = num_2
 		else:
 			self.pc += self.pc_shift[self.jump_if_false]
-		return []
+		return
 
 	def less_than(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
@@ -144,8 +133,7 @@ class IntCode:
 		else:
 			self.program[loc] = 0
 		self.pc += self.pc_shift[self.less_than]
-		return []
-
+		return
 
 	def equals(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
@@ -156,32 +144,27 @@ class IntCode:
 		else:
 			self.program[loc] = 0
 		self.pc += self.pc_shift[self.equals]
-		return []
+		return
 
-	def halt(self):
-		# This code should never be run
+	def halt(self, p_modes):
+		#Handle closing queues and thread shutdown
 		self.pc += self.pc_shift[self.halt]
-		print('halt instruction executed instead of program being halted')
-		assert (False)
-		# no return
+		return
 
 	def run_program(self):
 		while True:
 			instruction = self.program[self.pc]
 			p_nodes = get_param_modes(instruction)
-			print(f'p_nodes={p_nodes,type(p_nodes)}')
 			opcode_number = instruction % 100
-
-			operator = self.op_code.get(opcode_number)
-			if (operator == self.halt): return []
-			op_output = operator(p_nodes)
-			if(op_output != []):
-				self.output_callback(op_output)
-		# no return
+			operator = self.op_code[opcode_number]
+			operator(p_nodes)
+			if(operator == self.halt):
+				return self.program
 
 	def compare_state(self, other_state):
 		if(self.run_program() == other_state):
 			return True
 		else:
 			return False
+
 
