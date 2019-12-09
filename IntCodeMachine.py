@@ -1,5 +1,6 @@
 from enum import Enum
 from queue import Queue
+from threading import Thread
 
 class ParamMode(Enum):
 	POSITION_MODE = 0
@@ -31,6 +32,9 @@ class IntCodeMachine:
 		self.pc = 0
 		self.input_queue = input_queue
 		self.output_queue = output_queue
+		self.thread = ()
+		self.thread_name = ''
+		self.last_output=()
 		self.pc_shift = {
 			self.add: 4,
 			self.multiple: 4,
@@ -102,6 +106,8 @@ class IntCodeMachine:
 
 	def output(self, p_modes):
 		output_value = self.lookup_value(p_modes, 1)
+		self.last_output=output_value
+		#print(f'{self.thread_name} outputting {output_value}\n', end='')
 		self.output_queue.put_nowait(output_value)
 		self.pc += self.pc_shift[self.output]
 		return
