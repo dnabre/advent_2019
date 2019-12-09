@@ -9,6 +9,9 @@
 | [Day 4: Secure Container†](https://adventofcode.com/2019/day/4)  |  [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_4.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_4.py) |
 | [Day 5: Sunny with a Chance of Asteroids](https://adventofcode.com/2019/day/5)  |  [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_5.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_5.py) |
 | [Day 6: Universal Orbit Map](https://adventofcode.com/2019/day/6)  | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_6.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_6.py) |
+| [Day 7: Amplification Circuit](https://adventofcode.com/2019/day/7)  | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_7.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_7.py) |
+| [Day 8: Space Image Format](https://adventofcode.com/2019/day/7)  | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_8.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_8.py) |
+
 
 Learning Python as I go, so pardon the ugly code and style.
 
