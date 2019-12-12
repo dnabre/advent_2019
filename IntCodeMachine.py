@@ -5,15 +5,18 @@ from threading import Thread
 class ParamMode(Enum):
 	POSITION_MODE = 0
 	IMMEDIATE_MODE = 1
+	RELATIVE_MODE = 2
 
 	def __str__(self):
 		if (self == ParamMode.POSITION_MODE): return 'p'
 		elif (self == ParamMode.IMMEDIATE_MODE): return 'i'
+		elif (self == ParamMode.RELATIVE_MODE): return 'r'
 		else: raise TypeError(self)
 
 param_modes = {
 		0: 'p',
-		1: 'i'
+		1: 'i',
+		2: 'r'
 	}
 
 def get_param_modes(instruction):
@@ -22,14 +25,39 @@ def get_param_modes(instruction):
 	p3_mode = ParamMode(instruction // 10000 %10)
 	return (p1_mode,p2_mode,p3_mode)
 
+class IntCodeMemory:
+	def __init__(self, program_code):
+		self.memory = program_code.copy()
+
+	def __setitem__(self,key,value):
+		if (key >= len(self.memory)):
+			print(f'setting self.program[{key}] > {len(self.memory) - 1}]={value}, expand to memory[{(key - len(self.memory))}]')
+			self.memory += [0] * (1+ key - len(self.memory))
+		self.memory[key]=value
+
+	def __getitem__(self,key):
+		if (key >= len(self.memory)):
+				print(f'getting self.program[{key} > {len(self.memory) - 1}], expand to memory[{key}]')
+				self.memory += [0] * (1 + key - len(self.memory))
+		return self.memory[key]
+
+	def __str__(self):
+		return self.memory.__str__()
+
+	def asList(self):
+		return self.memory
+
 class IntCodeMachine:
 	input_queue: Queue
 	output_queue: Queue
 
 	def __init__(self, initial_state, input_queue, output_queue):
-		self.program = initial_state.copy()
+
+		self.program = IntCodeMemory(initial_state)
+		#self.program = initial_state.copy()
 		self.original_state = initial_state.copy()
 		self.pc = 0
+		self.relative_base = 0
 		self.input_queue = input_queue
 		self.output_queue = output_queue
 		self.thread = ()
@@ -44,6 +72,7 @@ class IntCodeMachine:
 			self.jump_if_false: 3,
 			self.less_than: 4,
 			self.equals: 4,
+			self.adj_base:2,
 			self.halt: 0
 		}
 		self.op_code = {
@@ -55,8 +84,11 @@ class IntCodeMachine:
 		6: self.jump_if_false,
 		7: self.less_than,
 		8: self.equals,
+		9: self.adj_base,
 		99: self.halt,
 		}
+
+
 
 	@staticmethod
 	def parse_from_string(s):
@@ -67,6 +99,16 @@ class IntCodeMachine:
 			result.append(num)
 		return result
 
+	@staticmethod
+	def code_to_string(c):
+		result = ""
+		for instruct in c:
+			result += f'{instruct},'
+		return result[:-1]
+
+
+
+
 	def lookup_value(self, p_mode, p_number):
 		p_m = p_mode[p_number - 1]
 		if (p_m == ParamMode.POSITION_MODE):
@@ -74,6 +116,9 @@ class IntCodeMachine:
 			value = self.program[loc]
 		elif (p_m == ParamMode.IMMEDIATE_MODE):
 			value = self.program[self.pc + p_number]
+		elif (p_m == ParamMode.RELATIVE_MODE):
+			loc_adjust = self.program[self.pc + p_number] + self.relative_base
+			value = self.program[loc_adjust]
 		else:
 			raise Exception(f'invalid ParamMode:{p_mode}')
 		return value
@@ -151,6 +196,14 @@ class IntCodeMachine:
 			self.program[loc] = 0
 		self.pc += self.pc_shift[self.equals]
 		return
+
+	def adj_base(self, p_modes):
+		num_1 = self.lookup_value(p_modes, 1)
+		self.relative_base += num_1
+		self.pc += self.pc_shift[self.adj_base]
+		return
+
+
 
 	def halt(self, p_modes):
 		#Handle closing queues and thread shutdown
