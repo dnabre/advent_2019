@@ -33,13 +33,13 @@ class IntCodeMemory:
 
 	def __setitem__(self,key,value):
 		if (key >= len(self.memory)):
-	#		print(f'setting self.program[{key}] > {len(self.memory) - 1}]={value}, expand to memory[{(key - len(self.memory))}]')
+			print(f'setting self.program[{key}] > {len(self.memory) - 1}]={value}, expand to memory[{(key - len(self.memory))}]')
 			self.memory += [0] * (1+ key - len(self.memory))
 		self.memory[key]=value
 
 	def __getitem__(self,key):
 		if (key >= len(self.memory)):
-	#			print(f'getting self.program[{key} > {len(self.memory) - 1}], expand to memory[{key}]')
+				print(f'getting self.program[{key} > {len(self.memory) - 1}], expand to memory[{key}]')
 				self.memory += [0] * (1 + key - len(self.memory))
 		return self.memory[key]
 
@@ -65,6 +65,8 @@ class IntCodeMachine:
 		self.thread = ()
 		self.thread_name = ''
 		self.last_output=()
+		self.watch = False
+		self.watch_list = [21107,21108]
 		self.pc_shift = {
 			self.add: 4,
 			self.multiple: 4,
@@ -152,10 +154,12 @@ class IntCodeMachine:
 			loc = self.relative_base + self.program[self.pc + 1]
 			mode += 'r'
 		else:
+			loc = self.program[self.pc + 1]  # location written to will never be in immediate mode
 			mode += 'UNKNOWN PARAMETER MODE'
-		#loc = self.program[self.pc + 1]  # location written to will never be in immediate mode
+
 		in_value = self.input_queue.get()
-	#	print(f'{self.thread_name} inputting {in_value} to {loc} p={mode}\n', end='')
+		#if(self.watch):
+		print(f'{self.thread_name} inputting {in_value} to {loc} p={mode}\n', end='')
 		self.program[loc] = in_value
 		self.pc += self.pc_shift[self.input]
 		self.input_queue.task_done()
@@ -163,9 +167,21 @@ class IntCodeMachine:
 
 	def output(self, p_modes):
 		#print(f'instruction {self.program[self.pc]}, {p_modes}')
-		output_value = self.lookup_value(p_modes, 1)
-		self.last_output=output_value
-	#	print(f'{self.thread_name} outputting {output_value}\n', end='')
+		mode=''
+		if (p_modes[0] == ParamMode.POSITION_MODE):
+			loc = self.program[self.pc + 1]
+			mode += 'p'
+			output_value = self.program[loc]
+		elif (p_modes[0] == ParamMode.RELATIVE_MODE):
+			loc = self.relative_base + self.program[self.pc + 1]
+			output_value = self.program[loc]
+			mode += 'r'
+		else:
+			mode += 'UNKNOWN PARAMETER MODE'
+			output_value = self.lookup_value(p_modes, 1)
+
+		#if (self.watch):
+		print(f'{self.thread_name} outputting {output_value}\n', end='')
 		self.output_queue.put_nowait(output_value)
 		self.pc += self.pc_shift[self.output]
 		return
@@ -191,7 +207,16 @@ class IntCodeMachine:
 	def less_than(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
-		loc = self.program[self.pc + 3]  # location written to will never be in immediate mode
+		#loc = self.program[self.pc + 3]
+		#loc = self.lookup_value(p_modes,3)
+
+		if (p_modes[0] == ParamMode.POSITION_MODE):
+			loc = self.program[self.pc + 1]
+		elif (p_modes[0] == ParamMode.RELATIVE_MODE):
+			loc = self.relative_base + self.program[self.pc + 1]
+		else:
+			loc = self.program[self.pc+3]
+
 		if (num_1 < num_2):
 			self.program[loc] = 1
 		else:
@@ -202,7 +227,16 @@ class IntCodeMachine:
 	def equals(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
-		loc = self.program[self.pc + 3]  # location written to will never be in immediate mode
+		loc = self.lookup_value(p_modes,3)
+
+		if (p_modes[0] == ParamMode.POSITION_MODE):
+			loc = self.program[self.pc + 1]
+		elif (p_modes[0] == ParamMode.RELATIVE_MODE):
+			loc = self.relative_base + self.program[self.pc + 1]
+		else:
+			loc = self.program[self.pc+3]
+
+
 		if (num_1 == num_2):
 			self.program[loc] = 1
 		else:
@@ -229,11 +263,17 @@ class IntCodeMachine:
 		while True:
 		#	print(f'{self.program} \t pc={self.pc} \t rb={self.relative_base}')
 			instruction = self.program[self.pc]
+			if(instruction in self.watch_list):
+				self.watch = True
+				#print(f'pc={self.pc} \t rb={self.relative_base} code={self.program.asList()[self.pc:]} \t ')
 			p_nodes = get_param_modes(instruction)
 			opcode_number = instruction % 100
 			operator = self.op_code[opcode_number]
-
+			if(instruction in self.watch_list):
+				self.watch = True
+				print(f'intrs = {instruction}  pc={self.pc}  rb={self.relative_base}  opcode = {operator} \t {p_nodes}  \t code={self.program.asList()[self.pc:self.pc+8]} ')
 			operator(p_nodes)
+			self.watch = False
 			if(operator == self.halt):
 				return self.program
 
