@@ -2,6 +2,8 @@ from enum import Enum
 from queue import Queue
 from threading import Thread
 
+
+
 class ParamMode(Enum):
 	POSITION_MODE = 0
 	IMMEDIATE_MODE = 1
@@ -31,13 +33,13 @@ class IntCodeMemory:
 
 	def __setitem__(self,key,value):
 		if (key >= len(self.memory)):
-			print(f'setting self.program[{key}] > {len(self.memory) - 1}]={value}, expand to memory[{(key - len(self.memory))}]')
+	#		print(f'setting self.program[{key}] > {len(self.memory) - 1}]={value}, expand to memory[{(key - len(self.memory))}]')
 			self.memory += [0] * (1+ key - len(self.memory))
 		self.memory[key]=value
 
 	def __getitem__(self,key):
 		if (key >= len(self.memory)):
-				print(f'getting self.program[{key} > {len(self.memory) - 1}], expand to memory[{key}]')
+	#			print(f'getting self.program[{key} > {len(self.memory) - 1}], expand to memory[{key}]')
 				self.memory += [0] * (1 + key - len(self.memory))
 		return self.memory[key]
 
@@ -142,17 +144,28 @@ class IntCodeMachine:
 		return
 
 	def input(self, p_modes):
-		loc = self.program[self.pc + 1]  # location written to will never be in immediate mode
+		mode = ''
+		if(p_modes[0] == ParamMode.POSITION_MODE):
+			loc = self.program[self.pc + 1]
+			mode += 'p'
+		elif (p_modes[0] == ParamMode.RELATIVE_MODE):
+			loc = self.relative_base + self.program[self.pc + 1]
+			mode += 'r'
+		else:
+			mode += 'UNKNOWN PARAMETER MODE'
+		#loc = self.program[self.pc + 1]  # location written to will never be in immediate mode
 		in_value = self.input_queue.get()
+	#	print(f'{self.thread_name} inputting {in_value} to {loc} p={mode}\n', end='')
 		self.program[loc] = in_value
 		self.pc += self.pc_shift[self.input]
 		self.input_queue.task_done()
 		return
 
 	def output(self, p_modes):
+		#print(f'instruction {self.program[self.pc]}, {p_modes}')
 		output_value = self.lookup_value(p_modes, 1)
 		self.last_output=output_value
-		#print(f'{self.thread_name} outputting {output_value}\n', end='')
+	#	print(f'{self.thread_name} outputting {output_value}\n', end='')
 		self.output_queue.put_nowait(output_value)
 		self.pc += self.pc_shift[self.output]
 		return
@@ -210,12 +223,16 @@ class IntCodeMachine:
 		self.pc += self.pc_shift[self.halt]
 		return
 
+
+
 	def run_program(self):
 		while True:
+		#	print(f'{self.program} \t pc={self.pc} \t rb={self.relative_base}')
 			instruction = self.program[self.pc]
 			p_nodes = get_param_modes(instruction)
 			opcode_number = instruction % 100
 			operator = self.op_code[opcode_number]
+
 			operator(p_nodes)
 			if(operator == self.halt):
 				return self.program
