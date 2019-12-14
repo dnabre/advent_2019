@@ -12,9 +12,10 @@
 | [Day 7: Amplification Circuit](https://adventofcode.com/2019/day/7)  | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_7.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_7.py) |
 | [Day 8: Space Image Format](https://adventofcode.com/2019/day/7)  | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_8.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_8.py) |
 | [Day 9: Sensor Boost ](https://adventofcode.com/2019/day/7)  | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_9.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_9.py) |
-| [Day 10: Monitoring Station](https://adventofcode.com/2019/day/10) | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_10.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_10.py) |
+| [Day 10: Monitoring Station†](https://adventofcode.com/2019/day/10) | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_10.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_10.py) |
+
 Learning Python as I go, so pardon the ugly code and style.
 
- † These programs are ugly hacks and shouldn't been consider when reviewing my code for constructive criticism.
+  These programs are ugly hacks and shouldn't been consider when reviewing my code for constructive criticism.
 
  
