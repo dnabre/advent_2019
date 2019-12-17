@@ -18,7 +18,7 @@
 | [Day 13: Care Package ](https://adventofcode.com/2019/day/13) | IntCode| [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_13.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_13.py) |
 | [Day 14: Space Stoichiometry](https://adventofcode.com/2019/day/14) | | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_14.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_14.py) |
 | [Day 15: Oxygen System](https://adventofcode.com/2019/day/15) | IntCode | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_15.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_15.py) |
-| [Day 16: Flawed Frequency Transmission](https://adventofcode.com/2019/day/16) | Linear Algebra | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_16.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_16.py) |
+| [Day 16: Flawed Frequency Transmission](https://adventofcode.com/2019/day/16) | Linear Algebra | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_16.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_16.py) |
 
 
 

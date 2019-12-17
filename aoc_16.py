@@ -52,18 +52,19 @@ import scipy
 
 base_pattern = [0, 1, 0, -1]
 
+
 def get_pattern(num_count, i):
 	pattern = []
 	pi = 0
 	while (len(pattern) < (num_count + 1)):
 		n = base_pattern[pi]
-		pattern += [n] * (i+1)
+		pattern += [n] * (i + 1)
 		pi = (pi + 1) % (len(base_pattern))
-	return pattern[1:num_count+1]
+	return pattern[1:num_count + 1]
 
 
 def build_phase_matrix(n):
-	mat_list = [get_pattern(n,r_num) for r_num in range(n)]
+	mat_list = [get_pattern(n, r_num) for r_num in range(n)]
 	return np.array(mat_list)
 
 
@@ -73,62 +74,88 @@ def apply_step(phase_matrix, input_list):
 	n_q = [abs(q) % 10 for q in n_q]
 	return n_q
 
-def string_for_first8(big_list,offset=0):
-		big_list=big_list[offset:]
-		result = ''
-		for i in range(8):
-			result += str( big_list[i])
-		return result
 
+def string_for_first8(big_list):
+	result = ''.join(map(str, big_list[:8]))
+	return result
+
+
+
+
+
+part2_tests = {
+	"03036732577212944063491565474664": "84462026",
+	"02935109699940807407585447034323": "78725270",
+	"03081770884921959731165446850517": "53553731",
+}
+
+
+def string_for_first8(big_list):
+	result = ''
+	for i in range(8):
+		result += str(big_list[i])
+	return result
 
 def str_to_list(t_string):
 	return [int(t_string[i]) for i in range(len(t_string))]
 
+def offsetfft(signal: np.array, repeat: int = 100) -> np.array:
+	# digits to number
+	offset = (10 ** np.arange(6, -1, -1) * signal[:7]).sum()
+	offsetsignal = np.tile(signal, 10000)[offset:]
+	for _ in range(repeat):
+		offsetsignal = np.cumsum(offsetsignal[::-1])[::-1] % 10
+	return offsetsignal
+
+part2_answer = '41402171'
+
 def main():
-#	c_len = 8
-#	mat = [get_pattern(c_len, r_num) for r_num in range(8)]
+	#	c_len = 8
+	#	mat = [get_pattern(c_len, r_num) for r_num in range(8)]
 
 	test1 = '80871224585914546619083218645595'
 	test2 = '19617804207202209144916044189917'
 	test3 = '69317163492948606335995924319873'
 
 	test4 = '03036732577212944063491565474664'
-	test5 ='02935109699940807407585447034323'
+	test5 = '02935109699940807407585447034323'
 	test6 = '03081770884921959731165446850517'
 	start_time = time.time()
 
-
-	target_string= test3
+	target_string = test3
 	n_list = str_to_list(target_string)
-	#n_list = n_list * 10000
-	print(f'length of target is {len(n_list)}')
-
-	print('building matrix: ', end='')
-	mat = build_phase_matrix(len(n_list))
-	print(f'done ({time.time() - start_time} ms)')
-
-
-
-	start_time = time.time()
-
-	n_steps = 100
-
-
-	print("calculating: ", end='')
-	for x in range(n_steps):
-		n_list = apply_step(mat,n_list)
-		print(" {:3d} ".format(x), end='')
-
-	print()
-	print(f'done {time.time() - start_time} ms')
-
-
-	result = string_for_first8(n_list)
+	result =  string_for_first8(offsetfft(np.array(str_to_list(aoc16_p1_input))))
+	print(aoc16_p1_input, end='')
+	print('\n->\t', end='')
+	assert(result == part2_answer)
 	print(result)
 
 
 
+	"""
+	print('building matrix: ', end='')
+	mat = build_phase_matrix(len(n_list))
+	print(f'done ({time.time() - start_time} ms)')
+   """
+
+
+"""
+start_time = time.time()
+
+n_steps = 100
+
+
+print("calculating: ", end='')
+for x in range(n_steps):
+	n_list = apply_step(mat,n_list)
+	print(" {:3d} ".format(x), end='')
+
+print()
+print(f'done {time.time() - start_time} ms')
+result = string_for_first8(n_list)
+print(result)
+
+"""
 
 if __name__ == "__main__":
 	main()
-
