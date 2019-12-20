@@ -10,16 +10,19 @@
 | [Day 5: Sunny with a Chance of Asteroids](https://adventofcode.com/2019/day/5)  | IntCode |[*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_5.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_5.py) |
 | [Day 6: Universal Orbit Map](https://adventofcode.com/2019/day/6)  |  Orbit Graph | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_6.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_6.py) |
 | [Day 7: Amplification Circuit](https://adventofcode.com/2019/day/7)  | IntCode   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_7.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_7.py) |
-| [Day 8: Space Image Format](https://adventofcode.com/2019/day/8)  |   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_8.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_8.py) |
+| [Day 8: Space Image Format](https://adventofcode.com/2019/day/8)  | Array Manipulation  | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_8.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_8.py) |
 | [Day 9: Sensor Boost ](https://adventofcode.com/2019/day/9)  | IntCode |    [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_9.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_9.py) |
 | [Day 10: Monitoring Station†](https://adventofcode.com/2019/day/10) | Asteroid One| [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_10.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_10.py) |
 | [Day 11: Space Police](https://adventofcode.com/2019/day/11) | IntCode| [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_11.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_11.py) |
 | [Day 12: The N-Body Problem](https://adventofcode.com/2019/day/12) | Particle  System| [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_12.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_12.py) |
 | [Day 13: Care Package ](https://adventofcode.com/2019/day/13) | IntCode| [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_13.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_13.py) |
-| [Day 14: Space Stoichiometry](https://adventofcode.com/2019/day/14) | | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_14.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_14.py) |
+| [Day 14: Space Stoichiometry](https://adventofcode.com/2019/day/14) | Graph Minimization | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_14.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_14.py) |
 | [Day 15: Oxygen System](https://adventofcode.com/2019/day/15) | IntCode | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_15.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_15.py) |
 | [Day 16: Flawed Frequency Transmission](https://adventofcode.com/2019/day/16) | Linear Algebra | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_16.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_16.py) |
-
+| [Day 17: Set and Forget ](https://adventofcode.com/2019/day/17) | IntCode | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_17.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_17.py) |
+| [Day 18: Many-Worlds Interpretation ](https://adventofcode.com/2019/day/18) | Maze | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_18.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_18.py) |
+| [Day 19: Tractor Beam ](https://adventofcode.com/2019/day/19) | IntCode | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_19.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_19.py) |
+| [Day 20: Donut Maze ](https://adventofcode.com/2019/day/20) | Maze | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_20.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_20.py) |
 
 
 
