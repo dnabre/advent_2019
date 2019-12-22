@@ -1,4 +1,3 @@
-from collections import deque
 import sys
 AOC_22_DATA_FILENAME = 'aoc_22_input.txt'
 example_1 = """\
@@ -45,38 +44,31 @@ deck_size = PROBLEM_DECK_SIZE
 
 def deck2string(deck):
 	result = ''
-	for x in range(0, deck_size):
+	for x in range(len(deck)):
 		result += f'{deck[x]} '
 	result = result[:-1]
 	return result
 
 
 def init_deck():
-	deck = deque()
+	print(f'inital_deck of size {deck_size}')
+	deck = []
 	for i in range(0, deck_size):
 		deck.append(i)
 	return deck
 
 
+
 def deal_new_stack(deck, ignored):
-	new_deck = deque()
-	while (len(deck) > 0):
-		card = deck.popleft()
-		new_deck.appendleft(card)
-	return new_deck
+	new_deck = []
+	#for i in range(len(deck)):
+	#	new_deck.appendleft(deck[i])
+
+	return list(reversed(deck))
 
 
 def deal_cut(deck, n):
-	if (n > 0):
-		for _ in range(0, n):
-			card = deck.popleft()
-			deck.append(card)
-	else:
-		n = abs(n)
-		for _ in range(0, n):
-			card = deck.pop()
-			deck.appendleft(card)
-	return deck
+	return deck[n:] + deck[:n]
 
 
 def instruction2string(f, param):
@@ -85,18 +77,26 @@ def instruction2string(f, param):
 		result += 'deal into new stack'
 	elif (f == deal_cut):
 		result += f'cut {param}'
-	elif (f == deal_increment):
+	elif (f == deck_deal_inc):
 		result += f'deal with increment {param}'
 	else:
 		raise Exception(f'error {f}:{param}')
 	return result
 
+def deck_deal_inc(deck, n):
+    out = [-1 for _ in range(len(deck))]
+    for i in range(len(deck)):
+        pos = (i * n) % len(deck)
+        out[pos] = deck[i]
+    assert not any(x == -1 for x in out)
+    return out
 
-def deal_increment(deck, n):
+def deal_increment2(deck, n):
 	assert (n > 0)
-	new_deck = deque()
-	for _ in range(0, deck_size):
+	new_deck = []
+	for _ in range(0, len(deck)):
 		new_deck.append(-1)
+	'''
 	place = 0
 	for i in range(0, deck_size):
 		card = deck.popleft()
@@ -106,7 +106,12 @@ def deal_increment(deck, n):
 			raise Exception(f'increment dealt on existing card {card} -> {new_deck[place % deck_size]} @ {place}')
 		new_deck[place] = card
 		place = (place + n) % deck_size
+	'''
 
+	for i in range(len(deck)):
+	#	print(new_deck)
+	#	print(f'card={deck[i]}, new_deck[{(i * n) % deck_size}] = deck[{deck[i]}]')
+		new_deck[(i *n) % len(deck)] = deck[i]
 	return new_deck
 
 
@@ -126,7 +131,7 @@ def parse_instructions(target):
 			func = deal_cut
 			param = int(parts[1])
 		elif (parts[1] == 'with'):
-			func = deal_increment
+			func = deck_deal_inc
 			param = int(parts[3])
 		elif (parts[1] == 'into'):
 			func = deal_new_stack
@@ -143,6 +148,7 @@ def parse_instructions(target):
 
 def run_program(prog_string):
 	deck = init_deck()
+	print(f'deck is {deck[0:5]} ... {deck[(len(deck)) - 5:]}')
 	prog = parse_instructions(prog_string)
 	#print(len(deck))
 	for (func, param) in prog:
@@ -171,6 +177,7 @@ def main():
 		result = run_program(examples[i])
 		result_string = deck2string(result)
 	#	print(result_string)
+
 		assert(result_string == expected_results[i])
 	print()
 	deck_size = PROBLEM_DECK_SIZE
@@ -180,31 +187,35 @@ def main():
 	prob__prog = None
 	with open(AOC_22_DATA_FILENAME, 'r') as input_file:
 		prob_prog = input_file.readlines()
-	print(prob_prog)
+#	print(prob_prog)
 	part1 = ''
 	for p in prob_prog:
 		part1 += p
 
 	# print('\n\n')
 
+
 	prog = parse_instructions(part1)
+	for i in prog:
+		(f,p) = i
+		print(instruction2string(f,p))
+
 	d = run_program(part1)
 
 
 	#assert (deck2string(deck) == expected_results[test_num])
 	print(deck2string(d))
 
-	print(len(d))
-	print(d[2019])
-	print(d[2019+1])
+	print(f'length {len(d)}')
 
-	for i in range(2000,2022):
-		print('{:6d} \t'.format(i), end='')
-		print(d[i])
 
+	print (f'answer is {d.index(2019)}')
 	for i in range(len(d)):
 		if(d[i] == 1822):
 			print(i)
+			break
+
+# part 2 soluion : 49174686993380 ??
 
 
 if __name__ == '__main__':
