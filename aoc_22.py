@@ -51,7 +51,7 @@ def deck2string(deck):
 
 
 def init_deck():
-	print(f'inital_deck of size {deck_size}')
+	#print(f'inital_deck of size {deck_size}')
 	deck = []
 	for i in range(0, deck_size):
 		deck.append(i)
@@ -96,21 +96,7 @@ def deal_increment2(deck, n):
 	new_deck = []
 	for _ in range(0, len(deck)):
 		new_deck.append(-1)
-	'''
-	place = 0
-	for i in range(0, deck_size):
-		card = deck.popleft()
-	#	print(f'placing {i}th {card} into place={place} (increment is {n})')
-
-		if (new_deck[place] != -1):
-			raise Exception(f'increment dealt on existing card {card} -> {new_deck[place % deck_size]} @ {place}')
-		new_deck[place] = card
-		place = (place + n) % deck_size
-	'''
-
 	for i in range(len(deck)):
-	#	print(new_deck)
-	#	print(f'card={deck[i]}, new_deck[{(i * n) % deck_size}] = deck[{deck[i]}]')
 		new_deck[(i *n) % len(deck)] = deck[i]
 	return new_deck
 
@@ -124,7 +110,7 @@ def parse_instructions(target):
 	target = target.split('\n')
 	for line in target:
 		line = line.strip()
-		# print('{:5d} \t {:s}'.format(count,line))
+
 		count += 1
 		parts = line.split(' ')
 		if (parts[0] == 'cut'):
@@ -148,7 +134,7 @@ def parse_instructions(target):
 
 def run_program(prog_string):
 	deck = init_deck()
-	print(f'deck is {deck[0:5]} ... {deck[(len(deck)) - 5:]}')
+	#print(f'deck is {deck[0:5]} ... {deck[(len(deck)) - 5:]}')
 	prog = parse_instructions(prog_string)
 	#print(len(deck))
 	for (func, param) in prog:
@@ -196,22 +182,18 @@ def main():
 
 
 	prog = parse_instructions(part1)
-	for i in prog:
-		(f,p) = i
-		print(instruction2string(f,p))
-
 	d = run_program(part1)
 
 
 	#assert (deck2string(deck) == expected_results[test_num])
-	print(deck2string(d))
+	#print(deck2string(d))
 
 	print(f'length {len(d)}')
 
 
 	print (f'answer is {d.index(2019)}')
 	for i in range(len(d)):
-		if(d[i] == 1822):
+		if(d[i] == 2019):
 			print(i)
 			break
 
