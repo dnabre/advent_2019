@@ -1,4 +1,4 @@
-import pygame
+#import pygame
 import math
 
 BLACK = (0, 0, 0)
@@ -117,7 +117,7 @@ def main():
 		for y in range(len(prob_map[x])):
 			print(f'{(x,y)}')
 			grid[x][y] = prob_map[x][y]
-
+'''
 	pygame.init()
 	font = pygame.font.Font(None, FONT_SIZE)
 	screen = pygame.display.set_mode((1350,1350))
@@ -158,7 +158,7 @@ def main():
 
 			# Go ahead and update the screen with what we've drawn.
 			pygame.display.flip()
-
+'''
 
 if __name__ == "__main__":
 	main()
