@@ -287,7 +287,7 @@ def part2():
 	increment = pow(increment_mul, iterations, size)
 	offset = offset_diff * (1 - increment) * pow((1 - increment_mul) % size, size - 2, size)
 	offset = offset % size
-	card = 2020 - 1
+	card = 2020
 	card = (offset + card * increment) % size
 	print(f'Card at position {pos} after {iterations} rounds : {card}')
 
@@ -340,7 +340,7 @@ def main():
 # 			print(i)
 # 			break
 
-# part 2 soluion : 49174686993380
+
 	part2()
 
 if __name__ == '__main__':
