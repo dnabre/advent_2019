@@ -25,13 +25,13 @@
 | [Day 20: Donut Maze ](https://adventofcode.com/2019/day/20) | Maze | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_20.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_20.py) |
 | [Day 21: Springdroid Adventure ](https://adventofcode.com/2019/day/21) | IntCode | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_21.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_21.py) |
 | [Day 22: Slam Shuffle† ](https://adventofcode.com/2019/day/22) | Modulo Arithmetic | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_22.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_22.py) |
-| [Day 23:  ](https://adventofcode.com/2019/day/23) |  | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_23.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_23.py) |
-| [Day 24: ](https://adventofcode.com/2019/day/24) |  | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_24.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_24.py) |
+| [Day 23: Category Six ](https://adventofcode.com/2019/day/23) | IntCode | [](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_23.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_23.py) |
+| [Day 24: Planet of Discord†† : ](https://adventofcode.com/2019/day/24) | Celluar Automata | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_24.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_24.py) |
 | [Day 25: ](https://adventofcode.com/2019/day/25) |  | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_25.py)   | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_25.py) |
 
 
 Learning Python as I go, so pardon the ugly code and style.
 
  †) These programs are ugly hacks and shouldn't been consider when reviewing my code for constructive criticism.
-
+††) Massive clean-up refactoring needed
  
