@@ -1,3 +1,5 @@
+import math
+
 example_1 = """\
 10 ORE => 10 A
 1 ORE => 1 B
@@ -129,7 +131,7 @@ part1 = """\1 HJDM, 1 BMPDP, 8 DRCX, 2 TCTBL, 1 KGWDJ, 16 BRLF, 2 LWPB, 7 KDFQ =
 """
 
 examples = [example_1, example_2, example_3, example_4, example_5]
-raw_forms = example_5
+raw_forms = example_1
 
 
 def parse_lines(raw_input):
@@ -141,14 +143,38 @@ def parse_lines(raw_input):
 			result.append(ll)
 	return result
 
-
+bucket = list()
 formulae = []
+
+def compressed_bucket(bucket):
+	print(bucket)
+	print(type(bucket))
+	if(len(bucket) == 0): return []
+
+	result = dict()
+	for (c,q) in bucket:
+		if(c in result):
+			result[c] += q
+		else:
+			result[c] = q
+	r_list = []
+	for k, v in result.items():
+		r_list.append((k,v))
+	#print(f'compressed bucket as dict: {result}')
+	return r_list
+
+def all_in_bucket_is(b, c):
+	assert(len(b) > 0)
+	for (n,q) in b:
+		if(n != c):
+			return False
+	return True
 
 # {:5d}
 def main():
 	print('problem 14')
-
-	dd = parse_lines(example_5)
+	global bucket
+	dd = parse_lines(raw_forms)
 
 
 
@@ -164,32 +190,71 @@ def main():
 		for i in inputs:
 			i = i.strip()
 			[q, name] = i.split(' ')
-			form_inputs.append((name, q))
+			form_inputs.append((name, int(q)))
 
 		form_outputs = []
 		for i in outputs:
 			i = i.strip()
 			[q, name] = i.split(' ')
-			form_outputs.append((name, q))
+			form_outputs.append((name, int(q)))
 		formulae.append((form_inputs, form_outputs))
+	for (f_in, f_out) in formulae:
+		print(f'{f_in}-=>{f_out}')
+	print('##\n##\n')
+
+	hunks = 0
+	overflow_bucket =[]
+	bucket.append(('FUEL',1))
+	print(bucket)
+	
+	while  (len(bucket) > 0) :
+		goal = bucket.pop()
+		(chem,quant) = goal
+		for (f_in,f_out) in formulae:
+	
+			#print(f'f_in : {f_in}')
+			#print(f'f_out: {f_out}')		
+			(o_name,o_q) = f_out[0]
+			if(chem == o_name):
+				match = True
+				for (c,q) in f_in:
+					if(c=='ORE'):
+						print(f'hit over: {hunks} -> ', end='')
+						if(o_q == quant):
+							hunks += q
+						elif (quant > o_q):
+							hunks += q
+							quant -= q
+							bucket.insert(0,(chem,quant))
+						else:
+							hunks += q
+							l_o = o_q - quant
+							#bucket.insert(0,(chem, l_o))
+							overflow_bucket.append((chem,l_o))
+							'''
+							print('----\n')
+							print(f'{f_in}-=>{f_out}')
+							print(f'(chem,quant) = {(chem,quant)}')
+							print(f'(o_name,o_q) = {(o_name,o_q)}')
+							print(f'(c,q) = {(c,q)}')
+							print('----\n')
+							'''
+						print(hunks)
 
 
-	goal = ('FUEL', 1)
-	(g_name, g_quantity) = goal
-	new_goal = []
 
-	for (i, o) in formulae:
-		for (name, q) in o:
-			if (name == g_name):
-				print(f'found goal: {(i, o)}')
-				new_goal.append(i)
-
-	print('new goal:')
-	print(f'\t{new_goal}')
-
-
-
-	print('\n\nend main')
-
+					else:
+						print(f'adding {q*quant} of {c} to bucket (n={len(bucket)})')
+						bucket.append((c,q * quant))
+					bucket = compressed_bucket(bucket)
+				break
+		overflow_bucket = compressed_bucket(overflow_bucket)
+		print(f'total ore need: {hunks} ', end='')
+		if(len(overflow_bucket)>0):
+			print(f'with {len(bucket)} leftover reactants')
+			print(overflow_bucket)
+		else:
+			print()
+		print(f'final bucket contents: \n{bucket}')
 if __name__ == "__main__":
 	main()
