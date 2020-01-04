@@ -1,4 +1,5 @@
 import math
+import collections
 
 example_1 = """\
 10 ORE => 10 A
@@ -66,7 +67,7 @@ example_5 = """\
 5 BHXH, 4 VRPVC => 5 LTCX
 """
 
-part1 = """\
+part_1 = """\
 1 HJDM, 1 BMPDP, 8 DRCX, 2 TCTBL, 1 KGWDJ, 16 BRLF, 2 LWPB, 7 KDFQ => 6 ZSPL
 1 PVRCK, 3 RSLR, 4 JBZD => 6 LCHRC
 10 FCBVC, 1 TSJSJ, 20 SQCQ => 9 PNQLP
@@ -132,8 +133,7 @@ part1 = """\
 """
 
 examples = [example_1, example_2, example_3, example_4, example_5]
-raw_forms =  example_2
-
+raw_forms =  part_1
 
 def parse_lines(raw_input):
 	lns = raw_input.split('\n')
@@ -144,40 +144,88 @@ def parse_lines(raw_input):
 			result.append(ll)
 	return result
 
+Chem_base = collections.namedtuple('Chem_base', ['name','quant'])
+class Chem(Chem_base):
+	
+	def __str__(self):
+		first = '{:4s}'.format(self.name)
+		return f'{first} {self.quant}'
+	
+	__repr__ = __str__
+Formula_base = collections.namedtuple('Formula_base', ['req', 'ys'])
+class Formula(Formula_base):
+	def __str__(self):
+		left = self.req.__repr__()
+		return f'{left} => {self.ys}'
+	__repr__ = __str__
+
+Task_base = collections.namedtuple('Task_Base', ['chem','formula'])
+class Task(Task_base):
+	def __str__(self):
+		return f'{self.chem}: {self.formula}'
+	__repr__ = __str__
+
+form_list = list()
+order_queue = collections.deque()
+task_stack = list()
+
+
 bucket = list()
 formulae = []
 
-def compressed_bucket(bucket):
-#	print(bucket)
-#	print(type(bucket))
-#	if(len(bucket) == 0): return []
 
-	result = dict()
-	for (c,q) in bucket:
-		if(c in result):
-			result[c] += q
-		else:
-			result[c] = q
-	r_list = []
-	for k, v in result.items():
-		r_list.append((k,v))
-	#print(f'compressed bucket as dict: {result}')
-	return r_list
+def get_from_bucket(chem_name,bucket):
+	for c in bucket:
+		if(c.name == chem_name):
+			return c.quant
+	return 0
 
-def all_in_bucket_is(b, c):
-	assert(len(b) > 0)
-	for (n,q) in b:
-		if(n != c):
-			return False
-	return True
+
+
+def run_order_queue(order_queue, task_stack):
+	"""
+	Processes the order queue, expanding and ordering tasks into the task_stack 
+	"""
+
+	#
+	while (len(order_queue) > 0):
+	#	print(f'task_stack: {task_stack}')
+	#	print(f'order_queue: {order_queue}')
+		order = order_queue.popleft()
+		if(order.name == 'ORE'):
+			task_stack.append(Task(order,None))
+			continue
+		found_formula = False
+		for f in formulae:
+			if (f.ys.name == order.name) and (found_formula == False):
+				found_formula == True
+				y = f.ys.quant
+				task_stack.append(Task(order,f))
+				if(y >= order.quant):
+					#one iteration of formula gives use a enough to fulfill order
+					mult = 1
+				else: # y < order.quant 
+					#we need multiple copies of the formula
+					mult = math.ceil(order.quant / y)
+					assert(mult * y >= order.quant)
+				for prereq in f.req:
+					order_queue.append(Chem(prereq.name,prereq.quant * mult ))
+				continue
+			if(f.ys.name == order.name) and (found_formula == True):
+				print(f'Found other applicable formula for {order}: \n\t {f}')
+				continue
+		assert(found_formula == False)
+	return task_stack
 
 # {:5d}
 def main():
 	print('problem 14')
 	global bucket
+	global formulae
+	global order_queue
+	global task_stack
+
 	dd = parse_lines(raw_forms)
-
-
 
 	for ln in dd:
 		[left, right] = ln.split('=>')
@@ -191,72 +239,36 @@ def main():
 		for i in inputs:
 			i = i.strip()
 			[q, name] = i.split(' ')
-			form_inputs.append((name, int(q)))
-
+			#form_inputs.append((name, int(q)))
+			form_inputs.append(Chem(name,int(q)))
+		
 		form_outputs = []
 		for i in outputs:
 			i = i.strip()
 			[q, name] = i.split(' ')
-			form_outputs.append((name, int(q)))
-		formulae.append((form_inputs, form_outputs))
+		#	form_outputs.append((name, int(q)))
+			form_outputs.append(Chem(name,int(q)))
+		formulae.append(Formula(req=form_inputs, ys=form_outputs[0]))
+			
 		
-	for (f_in, f_out) in formulae:
-		print(f'{f_in}-=>{f_out}')
-	print('##\n##\n')
+	# for f in formulae:
+	# 	# f_in = f.req
+	# 	# f_out = f.yields
+	# 	# print(f'{f_in}-=>{f_out}')
+	# 	print(f)
+	# print('##\n')
 
-	hunks = 0
-	overflow_bucket =[]
-	bucket.append(('FUEL',1))
-	print(bucket)
+	order_queue.append(Chem('FUEL',1))
+
+	task_stack = run_order_queue(order_queue, task_stack)
+
+	print("\n# task_stack: ")
+	for t in task_stack:
+		print(t)
+
+
+
+
 	
-	while  (len(bucket) > 0) :
-		goal = bucket.pop()
-		(chem,quant) = goal
-		for (f_in,f_out) in formulae:
-	
-			#print(f'f_in : {f_in}')
-			#print(f'f_out: {f_out}')		
-			(o_name,o_q) = f_out[0]
-			if(chem == o_name):
-				match = True
-				for (c,q) in f_in:
-					if(c=='ORE'):
-						print(f'hit over: {hunks} -> ', end='')
-						if(o_q == quant):
-							hunks += q
-						elif (quant > o_q):
-							hunks += q
-							quant -= q
-							bucket.insert(0,(chem,quant))
-						else:
-							hunks += q
-							l_o = o_q - quant
-							#bucket.insert(0,(chem, l_o))
-							overflow_bucket.append((chem,l_o))
-							'''
-							print('----\n')
-							print(f'{f_in}-=>{f_out}')
-							print(f'(chem,quant) = {(chem,quant)}')
-							print(f'(o_name,o_q) = {(o_name,o_q)}')
-							print(f'(c,q) = {(c,q)}')
-							print('----\n')
-							'''
-						print(hunks)
-
-
-
-					else:
-						print(f'adding {q*quant} of {c} to bucket (n={len(bucket)})')
-						bucket.append((c,q * quant))
-					bucket = compressed_bucket(bucket)
-				break
-		overflow_bucket = compressed_bucket(overflow_bucket)
-		print(f'total ore need: {hunks} ', end='')
-		if(len(overflow_bucket)>0):
-			print(f'with {len(bucket)} leftover reactants')
-			print(overflow_bucket)
-		else:
-			print()
-		print(f'final bucket contents: \n{bucket}')
 if __name__ == "__main__":
 	main()
