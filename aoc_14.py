@@ -66,7 +66,8 @@ example_5 = """\
 5 BHXH, 4 VRPVC => 5 LTCX
 """
 
-part1 = """\1 HJDM, 1 BMPDP, 8 DRCX, 2 TCTBL, 1 KGWDJ, 16 BRLF, 2 LWPB, 7 KDFQ => 6 ZSPL
+part1 = """\
+1 HJDM, 1 BMPDP, 8 DRCX, 2 TCTBL, 1 KGWDJ, 16 BRLF, 2 LWPB, 7 KDFQ => 6 ZSPL
 1 PVRCK, 3 RSLR, 4 JBZD => 6 LCHRC
 10 FCBVC, 1 TSJSJ, 20 SQCQ => 9 PNQLP
 1 MBVL => 6 TSZJ
@@ -131,7 +132,7 @@ part1 = """\1 HJDM, 1 BMPDP, 8 DRCX, 2 TCTBL, 1 KGWDJ, 16 BRLF, 2 LWPB, 7 KDFQ =
 """
 
 examples = [example_1, example_2, example_3, example_4, example_5]
-raw_forms = example_1
+raw_forms =  example_2
 
 
 def parse_lines(raw_input):
@@ -147,9 +148,9 @@ bucket = list()
 formulae = []
 
 def compressed_bucket(bucket):
-	print(bucket)
-	print(type(bucket))
-	if(len(bucket) == 0): return []
+#	print(bucket)
+#	print(type(bucket))
+#	if(len(bucket) == 0): return []
 
 	result = dict()
 	for (c,q) in bucket:
@@ -198,6 +199,7 @@ def main():
 			[q, name] = i.split(' ')
 			form_outputs.append((name, int(q)))
 		formulae.append((form_inputs, form_outputs))
+		
 	for (f_in, f_out) in formulae:
 		print(f'{f_in}-=>{f_out}')
 	print('##\n##\n')
