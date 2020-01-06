@@ -213,7 +213,7 @@ def run_order_queue(order_queue, task_stack):
 		found_formula = False
 		for f in formulae:
 			if (f.ys.name == order.name) and (found_formula == False):
-				found_formula == True
+				found_formula = True
 				y = f.ys.quant
 
 				if(y >= order.quant):
@@ -464,6 +464,8 @@ def main():
 	print(f'\t\t solution is 1896688')
 
 	#print(f'to make 527234509632562761 fuel, we need {make_fuel(527234509632562761,formulae)} ORE')
+
+	
 
 def fu(fuel):
 	return make_fuel(fuel, formulae)
