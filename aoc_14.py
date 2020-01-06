@@ -1,6 +1,10 @@
 import math
 import collections
-import copy
+
+
+from collections import defaultdict
+from queue import Queue
+from math import ceil
 
 example_1 = """\
 10 ORE => 10 A
@@ -133,8 +137,7 @@ part_1 = """\
 21 VMZFB, 2 LJWM => 1 PBFZ
 """
 
-examples = [example_1, example_2, example_3, example_4, example_5]
-raw_forms = example_1
+
 
 def parse_lines(raw_input):
 	lns = raw_input.split('\n')
@@ -172,13 +175,7 @@ class Task(Task_base):
 
 
 
-form_list = list()
-order_queue = collections.deque()
-task_stack = list()
 
-
-
-formulae = []
 
 
 def mult_formula(m, f):
@@ -324,12 +321,68 @@ def run_task_stack(task_stack, bucket):
 
 	return ore_count
 
+
+
+
+
+def get_formula(c_name, f_list):
+
+	for f in f_list:
+		_req = f.req
+		_ys = f.ys
+
+		if(_ys.name == c_name):
+
+			return f
+
+	raise Exception(f'could not find formula for {c_name}')
+
+def make_fuel(amount, formulae):
+	ore_needed = 0
+	bucket = defaultdict(int)
+	orders = collections.deque()
+	orders.append(Chem('FUEL',amount))
+	#orders.put(Chem('FUEL', amount))
+
+	while (len(orders)> 0):
+#		print(orders)
+#		print(bucket)
+		order = orders.popleft()
+#		print(f'processing: {order}')
+		if(order.name == 'ORE'):
+
+			ore_needed += order.quant
+#			print(f'##adding {order.quant} ORE -> {order.quant}##')
+		elif order.quant <= bucket[order.name]:
+			bucket[order.name] -= order.quant
+		else:
+			amount_needed = order.quant - bucket[order.name]
+			f = get_formula(order.name, formulae)
+			mult = ceil(amount_needed/ f.ys.quant)
+			for r_chem in f.req:
+				orders.append(Chem(r_chem.name, r_chem.quant * mult))
+			leftover_amount = mult * f.ys.quant - amount_needed
+			bucket[order.name] = leftover_amount
+
+	return ore_needed
+
+
+
+
+
+
+
+examples = [example_1, example_2, example_3, example_4, example_5]
+raw_forms = part_1
+
+formulae = []
+
 def main():
 	print('problem 14')
 
 	global formulae
-	global order_queue
-	global task_stack
+	order_queue = collections.deque
+	task_stack = []
 
 	dd = parse_lines(raw_forms)
 
@@ -357,36 +410,63 @@ def main():
 		formulae.append(Formula(req=form_inputs, ys=form_outputs[0]))
 			
 		
-	# for f in formulae:
-	# 	# f_in = f.req
-	# 	# f_out = f.yields
-	# 	# print(f'{f_in}-=>{f_out}')
-	# 	print(f)
-	# print('##\n')
+	for f in formulae:
+		# f_in = f.req
+		# f_out = f.yields
+		# print(f'{f_in}-=>{f_out}')
+		print(f)
+	print('##\n')
 
-	order_queue.append(Chem('FUEL',1))
+#	order_queue.append(Chem('FUEL',1))
 
-	task_stack = run_order_queue(order_queue, task_stack)
-
-	print("\n# task_stack: ")
-	task_stack.reverse()
-	for t in task_stack:
-		print(t)
-	task_stack.reverse()
-	print('#\n')
-
-	num_ore = 0
-	num_ore = run_task_stack(task_stack, bucket=[])
+#	task_stack = run_order_queue(order_queue, task_stack)
+# Part 1 Solution = 783895
 
 
 
-	print(f'Ore Requered for Fuel 1: {num_ore}')
+	fuel_amount = 1
+	ore_needed = make_fuel(fuel_amount,formulae)
+	print(f'Part 1: ore needed for {fuel_amount} is {ore_needed}')
+
+	print(f'\n\nPart 2: how much fuel for {BIG_ORE} ore')
+
+	fuel = 7
+	l_ore = make_fuel(fuel, formulae)
+	n_ore = l_ore
+	best_fuel_guess = 1
+	fuel_range = (1048576,2097152)
+	ore_range = (fu(fuel_range[0]), fu(fuel_range[1]))
+	for x in range(100):
+		best_fuel_guess = fuel
+		fuel = (fuel_range[0]+fuel_range[1])/2
+		n_ore= fu(fuel)
+		#print(f'{x:5}\t n_ore: {n_ore} for fuel: {fuel} \t {BIG_ORE - n_ore} ')
+
+		if(n_ore < BIG_ORE):
+			fuel_range = (fuel, fuel_range[1])
+		else:
+			fuel_range = (fuel_range[0], fuel)
 
 
 
 
 
 
-	
+		#print(f'{x:5}\t n_ore: {n_ore} for fuel: {fuel} \t {BIG_ORE - n_ore} ')
+
+
+
+
+
+
+	n_ore = make_fuel(best_fuel_guess,formulae)
+	print(f'\t Most fuel for {BIG_ORE} ore is {int(best_fuel_guess)}  using {n_ore} ore ')
+	print(f'\t\t solution is 1896688')
+
+	#print(f'to make 527234509632562761 fuel, we need {make_fuel(527234509632562761,formulae)} ORE')
+
+def fu(fuel):
+	return make_fuel(fuel, formulae)
+BIG_ORE = 1_000_000_000_000
 if __name__ == "__main__":
 	main()
