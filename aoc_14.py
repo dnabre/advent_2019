@@ -1,5 +1,6 @@
 import math
 import collections
+import copy
 
 example_1 = """\
 10 ORE => 10 A
@@ -133,7 +134,7 @@ part_1 = """\
 """
 
 examples = [example_1, example_2, example_3, example_4, example_5]
-raw_forms =  part_1
+raw_forms = example_1
 
 def parse_lines(raw_input):
 	lns = raw_input.split('\n')
@@ -150,7 +151,8 @@ class Chem(Chem_base):
 	def __str__(self):
 		first = '{:4s}'.format(self.name)
 		return f'{first} {self.quant}'
-	
+
+
 	__repr__ = __str__
 Formula_base = collections.namedtuple('Formula_base', ['req', 'ys'])
 class Formula(Formula_base):
@@ -159,19 +161,35 @@ class Formula(Formula_base):
 		return f'{left} => {self.ys}'
 	__repr__ = __str__
 
+
 Task_base = collections.namedtuple('Task_Base', ['chem','formula'])
 class Task(Task_base):
 	def __str__(self):
 		return f'{self.chem}: {self.formula}'
 	__repr__ = __str__
 
+
+
+
+
 form_list = list()
 order_queue = collections.deque()
 task_stack = list()
 
 
-bucket = list()
+
 formulae = []
+
+
+def mult_formula(m, f):
+	if (m == 1): return f
+
+	_ys = Chem(f.ys.name, f.ys.quant * m)
+	_req = []
+	for c in f.req:
+		_req.append(Chem(c.name,c.quant *m ))
+
+	return Formula(_req,_ys)
 
 
 def get_from_bucket(chem_name,bucket):
@@ -193,14 +211,14 @@ def run_order_queue(order_queue, task_stack):
 	#	print(f'order_queue: {order_queue}')
 		order = order_queue.popleft()
 		if(order.name == 'ORE'):
-			task_stack.append(Task(order,None))
+			#task_stack.append(Task(order,None))
 			continue
 		found_formula = False
 		for f in formulae:
 			if (f.ys.name == order.name) and (found_formula == False):
 				found_formula == True
 				y = f.ys.quant
-				task_stack.append(Task(order,f))
+
 				if(y >= order.quant):
 					#one iteration of formula gives use a enough to fulfill order
 					mult = 1
@@ -210,6 +228,9 @@ def run_order_queue(order_queue, task_stack):
 					assert(mult * y >= order.quant)
 				for prereq in f.req:
 					order_queue.append(Chem(prereq.name,prereq.quant * mult ))
+				new_task= Task(order,mult_formula(mult,f))
+				#new_task = Task(order,  f)
+				task_stack.append(new_task)
 				continue
 			if(f.ys.name == order.name) and (found_formula == True):
 				print(f'Found other applicable formula for {order}: \n\t {f}')
@@ -217,10 +238,95 @@ def run_order_queue(order_queue, task_stack):
 		assert(found_formula == False)
 	return task_stack
 
-# {:5d}
+
+def ore_in_list(c_list):
+	n_ore = 0
+	for c in c_list:
+		if (c.name =='ORE') and (c.quant > 0):
+			n_ore += c.quant
+	return n_ore
+
+def bucket_add_ore(n, bucket):
+	for c in bucket:
+		if(c.name == 'ORE'):
+			bucket.remove(c)
+			bucket.append(Chem(c.name, c.quant + n))
+			return
+
+
+def remove_requirements(bucket, chems):
+	print(f'\n\tremoving {chems} from {bucket} ->', end='')
+	n_bucket = []
+
+	for b in bucket:
+		n_chem = Chem(b.name,b.quant)
+		for c in chems:
+			if(c.name == b.name):
+				left_amount = b.quant - c.quant
+				if(left_amount > 0):
+					n_chem = Chem(c.name, left_amount)
+				else:
+					n_chem = None
+		if(n_chem != None):
+			n_bucket.append(n_chem)
+	print(n_bucket)
+	return n_bucket
+
+
+def add_result(bucket, c):
+	print(f'\t adding {c} -> ', end='')
+	n_bucket = []
+	current = None
+	for b in bucket:
+		if(b.name == c.name):
+			current = b
+		else:
+			n_bucket.append(b)
+	if(current == None):
+		n_bucket.append(c)
+	else:
+		amount = current.quant + c.quant
+		n_bucket.append(Chem(c.name, amount))
+	print(n_bucket)
+	return n_bucket
+
+
+def run_task_stack(task_stack, bucket):
+	ore_count = 0
+	if(bucket==[]): bucket.append(Chem('ORE',0))
+	while (len(task_stack) > 0):
+		task = task_stack.pop()
+		print(f'task: {task}')
+#		print(f'bucket: {bucket}')
+		t_Chem = task.chem
+		t_form = task.formula
+		if(t_Chem.name=='ORE'):
+			continue
+		else:
+			_r = t_form.req
+			_y = t_form.ys
+
+			needed_ore = ore_in_list(_r)
+			have_ore = ore_in_list(bucket)
+			#print(f'ORE needed:{needed_ore}, have in bucket: {have_ore}, to add: {max(0,needed_ore - have_ore)}')
+			if(have_ore < needed_ore):
+				add_ore = needed_ore - have_ore
+				#bucket_add_ore(add_ore,bucket)
+				bucket = add_result(bucket, Chem('ORE', add_ore))
+				ore_count += add_ore
+
+			print(f'bucket: {bucket} ->', end='')
+			bucket = remove_requirements(bucket, _r)
+			bucket = add_result(bucket, _y)
+			print(bucket)
+
+
+
+	return ore_count
+
 def main():
 	print('problem 14')
-	global bucket
+
 	global formulae
 	global order_queue
 	global task_stack
@@ -263,8 +369,20 @@ def main():
 	task_stack = run_order_queue(order_queue, task_stack)
 
 	print("\n# task_stack: ")
+	task_stack.reverse()
 	for t in task_stack:
 		print(t)
+	task_stack.reverse()
+	print('#\n')
+
+	num_ore = 0
+	num_ore = run_task_stack(task_stack, bucket=[])
+
+
+
+	print(f'Ore Requered for Fuel 1: {num_ore}')
+
+
 
 
 
