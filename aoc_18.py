@@ -1,13 +1,5 @@
-#import pygame
+
 import math
-
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-
-PI = math.pi
 
 example_1 = """\
 #########
@@ -57,108 +49,87 @@ example_5 = """\
 
 example_steps = [8,86, 132,136,81]
 examples = [example_1,example_2,example_3,example_4,example_5]
-
+target = example_4
 AOC_18_DATA_FILENAME='aoc_18_input.txt'
 
-TEST_CHARS = ['#', '*', 'a','b','c','d','O','A','B','C','D', '@',]
 
-MARGIN = 1
-HEIGHT = 15
-WIDTH = 15
-FONT_SIZE=30
-
-GRID_HEIGHT =81
-GRID_WIDTH= 81
-
-grid = []
-
-def grid_init():
-	for row in range(GRID_HEIGHT):
-		grid.append([])
-		for column in range(GRID_WIDTH):
-			grid[row].append('_')
-
-
-
-
-
+def part_1_map():
+	with open(AOC_18_DATA_FILENAME, 'r') as input_file:
+		prob_map = input_file.readlines()
+	return prob_map
 
 def get_dims(map):
 	x = len(map)
 	y = len(map[0])
-	return (x,y)
+	return (y,x)
 
+def map2array(map):
+	result = []
+	rows = map.split('\n')
+	for r in rows: r = r.strip()
+	rows = rows[:-1]
+	for r in rows:
+		new_row=[]
+		for c in r:
+			new_row.append(c)
+#			print(c,end='')
+#		print()
+		result.append(new_row)
+	return result
+
+def make_paded_array(map):
+	n_rows = len(map)
+	n_cols = len(map[0])
+	print((n_rows,n_cols))
+	for r in map:
+		r.append('#')
+		r.insert(0,'#')	
+	row_length = len(map[0])
+	map.insert(0,(['#'] * row_length))
+	map.append(['#'] * row_length)
+	return map
+
+def print_map(map):
+	for r in map:
+		for c in r:
+			print(c,end='')
+		print()
+def coords_for(map, ch):
+	x = 0
+	y = 0
+	for (y,r) in enumerate(map):
+		
+		for (x,c) in enumerate(r):
+			if(c == ch):
+				return (x,y)
+			
+		
+	return (-1,-1)
+def map2dict(map):
+	map = make_paded_array(map)
+	m = dict()
+	for (y,r) in enumerate(map):
+		for (x,c) in enumerate(r):
+			m[(x-1,y-1)] = c
+	return m
+
+markers = '@,a,b,c,d,e,f,g,H,A,B,C,D,E,F,G,H'
 def main():
-	for ex in examples:
-		ex = ex.split('\n')
-		print(ex)
-		print(get_dims(ex))
-		print("\n\n")
+	#print(target)
+	map = map2array(target)
+	print_map(map)	
+	#print(get_dims(map))
+	dims = get_dims(map)
+	print(dims)
+	pd_map = map2dict(map)
+	
+	for y in range(dims[1]):
+		for x in range(dims[0]):
+			c = pd_map[(x,y)]
+			print(c,end='')
+		print()
 
-	with open(AOC_18_DATA_FILENAME, 'r') as input_file:
-		prob_map = input_file.readlines()
-
-	for x in range(len(prob_map)):
-		prob_map[x] = prob_map[x].strip()
-
-
-
-
-
-	prob_map_dims = get_dims(prob_map)
-	print(prob_map)
-	print(prob_map_dims)
-
-	prob_map = example_1.split('\n')
-
-	grid_init()
-
-	for x in range(len(prob_map)):
-		for y in range(len(prob_map[x])):
-			print(f'{(x,y)}')
-			grid[x][y] = prob_map[x][y]
-'''
-	pygame.init()
-	font = pygame.font.Font(None, FONT_SIZE)
-	screen = pygame.display.set_mode((1350,1350))
-	pygame.display.set_caption('AOC Day 18')
-	clock = pygame.time.Clock()
-	done = False
-	while not done:
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				done = True
-
-			screen.fill(BLACK)
-
-			# Draw the grid
-			num_example = len(TEST_CHARS)
-			for row in range(GRID_HEIGHT):
-				for column in range(GRID_WIDTH):
-					color = WHITE
-
-					if grid[row][column] == 1:
-						color = GREEN
-					pygame.draw.rect(screen,
-									 color,
-									 [(MARGIN + WIDTH) * column + MARGIN,
-									  (MARGIN + HEIGHT) * row + MARGIN,
-									  WIDTH,
-									  HEIGHT])
-					#ch = TEST_CHARS[((row*column) + column) % num_example]
-					#print(f'{ch} @ {(MARGIN + WIDTH) * column + MARGIN}x{ (MARGIN + HEIGHT) * row + MARGIN}' )
-					ch = grid[row][column]
-					print(ch)
-					if(ch != '.'):
-						text = font.render(str(ch), True, BLACK)
-						screen.blit(text,[(MARGIN + WIDTH) * column + MARGIN, (MARGIN + HEIGHT) * row + MARGIN])
-
-			# Limit to 60 frames per second
-			clock.tick(60)
-
-			# Go ahead and update the screen with what we've drawn.
-			pygame.display.flip()
-'''
+	
 
 if __name__ == "__main__":
 	main()
