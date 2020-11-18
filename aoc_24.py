@@ -397,11 +397,3 @@ if __name__ == '__main__':
 	main()
 
 
-
-
-	# for z in [0]:
-	# 	for r in range(5):
-	# 		for c in range(5):
-	# 			if (r==2) and (c==2): continue
-	# 			re = getAdjLocations(z, r, c)
-	# 			print(f'{(z, r, c)} [{len(re)}]:  {re}')
