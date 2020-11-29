@@ -84,7 +84,7 @@ class Location:
 
 
 
-CURRENT_FILE = 'aoc_18_test_1.txt'
+CURRENT_FILE = 'aoc_18_input.txt'
 
 
 
@@ -100,7 +100,16 @@ def main():
 	global keys
 	global doors
 	
-	lines = currect_map.split('\n')
+	
+	
+	with open(CURRENT_FILE, 'r') as input_file:
+		all_file = input_file.read()
+	
+	map2 = example_1
+	#map2=all_file
+	
+	
+	lines = map2.split('\n')
 	height = len(lines)
 	width = len(lines[0])
 
