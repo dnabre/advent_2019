@@ -65,7 +65,12 @@ TESTS_2 = [
 	[17], [1001]),
 ]
 
-
+P_TEST=[
+(
+	'3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,1000,8,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99',
+	'3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,1001,17,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99',
+	[17], [1001])
+]
 
 
 TESTS_9_1=[
@@ -90,7 +95,7 @@ def run_tests(test_set, name=''):
 	if(len(test_set) > 1):
 		print(f'running {name} series of {len(test_set)} tests')
 	for t in test_set:
-		#print(f'\n{t}')
+	#	print(f'\n{t}')
 		(test_prog, test_prog_expected_string, test_inputs, test_outputs) = t
 		test_prog = IntCodeMachine.parse_from_string(test_prog)
 		input_queue = Queue(maxsize=0)
@@ -99,34 +104,34 @@ def run_tests(test_set, name=''):
 		output_queue = Queue(maxsize=0)
 		cpu = IntCodeMachine(test_prog, input_queue, output_queue)
 		test_results = cpu.run_program().asList()
-		#print(test_prog)
-		#print(test_results)
+	#	print(test_prog)
+#		print(test_results)
 		program_outputs = []
 		while (not output_queue.empty()):
 			g = output_queue.get()
 			program_outputs.append(g)
 			output_queue.task_done()
 
-		# print('', end='\t')
-		# print(test_prog, end=' ')
+	#	print('', end='\t')
+	#	print(test_prog, end=' ')
 
 		test_prog_expected = IntCodeMachine.parse_from_string(test_prog_expected_string)
 
-		# print(f' -> {test_result}')
-		# print(f'output={program_outputs}')
+#		print(f' -> {test_result}')
+		print(f'output={program_outputs}', end="")
 
 		failed = False
 		if (test_results != test_prog_expected):
 			failed = True
-			print(t)
-			print(f'error:  expected program state: {test_prog_expected} {type(test_prog_expected)}')
-			print(f'error:  received program state: {test_results} {type(test_results)}')
+		#	print(t)
+		#	print(f'error:  expected program state: {test_prog_expected} {type(test_prog_expected)}')
+	#		print(f'error:  received program state: {test_results} {type(test_results)}')
 			#print(f'raw string: {IntCodeMachine.code_to_string(test_results)}')
 		if (test_outputs != program_outputs):
 			failed = True
-			print(t)
-			print(f'error: expected program output: {test_outputs}')
-			print(f'error: received program output: {program_outputs}')
+	#		print(t)
+#			print(f'error: expected program output: {test_outputs}')
+#			print(f'error: received program output: {program_outputs}')
 
 		if failed:
 			sys.exit('test failed')
@@ -237,9 +242,9 @@ def output_queue_to_list(q):
 
 def main():
 
-	run_tests(TESTS_1, name="Test Set #1")
-	run_tests(TESTS_2, name="Test Set #2")
-
+	#run_tests(TESTS_1, name="Test Set #1")
+#	run_tests(TESTS_2, name="Test Set #2")
+	run_tests(P_TEST, name="Problem Test")
 #	run_tests(TESTS_9_1, name="Problem 9 Series")
 
 #	aoc9_part1()
