@@ -22,10 +22,20 @@ param_modes = {
 	}
 
 def get_param_modes(instruction):
-	p1_mode = ParamMode(instruction // 100 %10)
-	p2_mode = ParamMode(instruction // 1000 %10)
-	p3_mode = ParamMode(instruction // 10000 %10)
-	return (p1_mode,p2_mode,p3_mode)
+#	print(f'get_param_modes({instruction})')
+	i_mid = instruction
+	i_mid = i_mid // 100
+	p1r = i_mid % 10
+	i_mid = i_mid // 10
+	p2r = i_mid % 10
+	i_mid = i_mid // 10
+	p3r = i_mid % 10
+#	print(f' raw mode numbers : {p1r} {p2r} {p3r}')
+	p1_mode = ParamMode(p1r)
+	p2_mode = ParamMode(p2r)
+	p3_mode = ParamMode(p3r)
+	return (p1_mode, p2_mode, p3_mode)
+
 
 class IntCodeMemory:
 	def __init__(self, program_code):
@@ -118,14 +128,33 @@ class IntCodeMachine:
 		if (p_m == ParamMode.POSITION_MODE):
 			loc = self.program[self.pc + p_number]
 			value = self.program[loc]
+			print(f'position mode p_m={p_number - 1}, loc: {loc}, value: {value}, yield {value}')
 		elif (p_m == ParamMode.IMMEDIATE_MODE):
 			value = self.program[self.pc + p_number]
+			print(f'immedate mode p_m={p_number - 1}, loc: {self.pc+p_number}, value: {value}, value {value}')
 		elif (p_m == ParamMode.RELATIVE_MODE):
 			loc_adjust = self.program[self.pc + p_number] + self.relative_base
 			value = self.program[loc_adjust]
+			print(f'relative mode p_m={p_number - 1},, loc: {loc_adjust}, value: {value} adjust: {self.program[self.pc + p_number]} rb: {self.relative_base} ')
 		else:
+			print(f' invalud param')
 			raise Exception(f'invalid ParamMode:{p_mode}')
 		return value
+
+	def lookup_position(self, p_mode, p_number):
+		p_m = p_mode[p_number - 1]
+		if (p_m == ParamMode.POSITION_MODE):
+			loc = self.program[self.pc + p_number]
+
+		elif (p_m == ParamMode.IMMEDIATE_MODE):
+			loc = self.pc + p_number;
+
+		elif (p_m == ParamMode.RELATIVE_MODE):
+			loc= self.program[self.pc + p_number] + self.relative_base
+		else:
+			print(f' invalid param')
+			raise Exception(f'invalid ParamMode:{p_mode}')
+		return loc
 
 	def add(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
@@ -189,6 +218,9 @@ class IntCodeMachine:
 	def jump_if_true(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
+		print(f'\tjnz {self.program[self.pc+1]} {self.program[self.pc+2]}, num_1: {num_1} num_2: {num_2}')
+		print(f' tape[20] => {self.program[20]}')
+
 		if (num_1 != 0):
 			self.pc = num_2
 		else:
@@ -225,22 +257,22 @@ class IntCodeMachine:
 		return
 
 	def equals(self, p_modes):
+		print(f' p_modes: {p_modes}')
+		print("tape: ", end="")
+		for i in range(20):
+			print(f'{self.program[i]}, ', end="")
+		print()
+		print(f'\t\t GOAL: teq: av:17 bv: 8 eq: False to loc: 0 to 20')
+		print(f' loc[21]={self.program[21]}, loc[4]={self.program[4]}, loc[20]={self.program[20]}')
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
-		loc = self.lookup_value(p_modes,3)
 
-		if (p_modes[0] == ParamMode.POSITION_MODE):
-			loc = self.program[self.pc + 1]
-		elif (p_modes[0] == ParamMode.RELATIVE_MODE):
-			loc = self.relative_base + self.program[self.pc + 1]
-		else:
-			loc = self.program[self.pc+3]
+		num_3 = self.lookup_position(p_modes, 3)
+		print(f'using lookup, num_1: {num_1} num_2: {num_2} num_3: {num_3}')
+		self.program[num_3]= int(num_1 == num_2)
+		print(f'\t teq=> av: {num_1} bv: {num_2} eq: {num_1==num_2} to loc: {int(num_1==num_2)} to {num_3} ')
 
 
-		if (num_1 == num_2):
-			self.program[loc] = 1
-		else:
-			self.program[loc] = 0
 		self.pc += self.pc_shift[self.equals]
 		return
 
@@ -260,18 +292,24 @@ class IntCodeMachine:
 
 
 	def run_program(self):
+		print(f'program: {self.program}')
 		while True:
 		#	print(f'{self.program} \t pc={self.pc} \t rb={self.relative_base}')
 			instruction = self.program[self.pc]
+			print(f'pc: {self.pc} raw: {instruction}')
+			if self.pc == 6:
+				print(f'program: {self.program}')
 			if(instruction in self.watch_list):
 				self.watch = True
 				#print(f'pc={self.pc} \t rb={self.relative_base} code={self.program.asList()[self.pc:]} \t ')
 			p_nodes = get_param_modes(instruction)
+			print(f'p_nodes: {p_nodes}')
 			opcode_number = instruction % 100
 			operator = self.op_code[opcode_number]
-			if(instruction in self.watch_list):
-				self.watch = True
-				print(f'intrs = {instruction}  pc={self.pc}  rb={self.relative_base}  opcode = {operator} \t {p_nodes}  \t code={self.program.asList()[self.pc:self.pc+8]} ')
+			print(f' pc: {self.pc}  opcode: {opcode_number}')
+		#	if(instruction in self.watch_list):
+		#		self.watch = True
+		#		print(f'intrs = {instruction}  pc={self.pc}  rb={self.relative_base}  opcode = {operator} \t {p_nodes}  \t code={self.program.asList()[self.pc:self.pc+8]} ')
 			operator(p_nodes)
 			self.watch = False
 			if(operator == self.halt):
