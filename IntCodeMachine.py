@@ -156,7 +156,7 @@ class IntCodeMachine:
 			raise Exception(f'invalid ParamMode:{p_mode}')
 		return loc
 
-	
+
 	def add(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
@@ -171,9 +171,10 @@ class IntCodeMachine:
 	def multiple(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
-		loc = self.program[self.pc + 3]  # location written to will never be in immediate mode
+		num_3 = self.lookup_position(p_modes, 3)
+		#loc = self.program[self.pc + 3]  # location written to will never be in immediate mode
 		result = num_1 * num_2
-		self.program[loc] = result
+		self.program[num_3] = result
 		self.pc += self.pc_shift[self.multiple]
 		return
 
