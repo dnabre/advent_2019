@@ -189,10 +189,10 @@ class IntCodeMachine:
 		else:
 			loc = self.program[self.pc + 1]  # location written to will never be in immediate mode
 			mode += 'UNKNOWN PARAMETER MODE'
-
+		print('reading input queue')
 		in_value = self.input_queue.get()
 		#if(self.watch):
-		#print(f'{self.thread_name} inputting {in_value} to {loc} p={mode}\n', end='')
+		print(f'{self.thread_name} inputting {in_value} to {loc} p={mode}\n', end='')
 		self.program[loc] = in_value
 		self.pc += self.pc_shift[self.input]
 		self.input_queue.task_done()
@@ -294,6 +294,26 @@ class IntCodeMachine:
 
 
 	def run_program(self):
+		#print(f'program: {self.program}')
+		while True:
+		#	print(f'{self.program} \t pc={self.pc} \t rb={self.relative_base}')
+			instruction = self.program[self.pc]
+
+
+
+			p_nodes = get_param_modes(instruction)
+
+			opcode_number = instruction % 100
+			operator = self.op_code[opcode_number]
+			print(f' pc: {self.pc}  opcode: {opcode_number}')
+
+			operator(p_nodes)
+			self.watch = False
+			if(operator == self.halt):
+				return self.program
+
+
+	def run_until_input(self):
 		#print(f'program: {self.program}')
 		while True:
 		#	print(f'{self.program} \t pc={self.pc} \t rb={self.relative_base}')
