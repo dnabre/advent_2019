@@ -239,20 +239,18 @@ class IntCodeMachine:
 	def less_than(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
-		#loc = self.program[self.pc + 3]
-		#loc = self.lookup_value(p_modes,3)
+		num_3 = self.lookup_position(p_modes,3)
 
-		if (p_modes[0] == ParamMode.POSITION_MODE):
-			loc = self.program[self.pc + 1]
-		elif (p_modes[0] == ParamMode.RELATIVE_MODE):
-			loc = self.relative_base + self.program[self.pc + 1]
-		else:
-			loc = self.program[self.pc+3]
+		#if (p_modes[0] == ParamMode.POSITION_MODE):
+	#	elif (p_modes[0] == ParamMode.RELATIVE_MODE):
+	#		loc = self.relative_base + self.program[self.pc + 1]
+	#	else:
+	#		loc = self.program[self.pc+3]
 
 		if (num_1 < num_2):
-			self.program[loc] = 1
+			self.program[num_3] = 1
 		else:
-			self.program[loc] = 0
+			self.program[num_3] = 0
 		self.pc += self.pc_shift[self.less_than]
 		return
 
