@@ -305,7 +305,7 @@ class IntCodeMachine:
 
 			opcode_number = instruction % 100
 			operator = self.op_code[opcode_number]
-			print(f' pc: {self.pc}  opcode: {opcode_number}')
+		#	print(f' pc: {self.pc}  opcode: {opcode_number}')
 
 			operator(p_nodes)
 			self.watch = False
