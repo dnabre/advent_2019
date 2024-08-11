@@ -6,6 +6,16 @@ import itertools
 import time
 from IntCodeMachine import *
 
+
+
+#    Advent of Code 2019: Day 9
+#        part1 answer: 3598076521
+#        part2 answer: 90722
+
+answer1 = 3598076521
+answer2 = 90722
+
+
 aoc_7_input = '3,8,1001,8,10,8,105,1,0,0,21,38,59,84,97,110,191,272,353,434,99999,3,9,1002,9,2,9,101,4,9,9,1002,9,2,9,4,9,99,3,9,102,5,9,9,1001,9,3,9,1002,9,5,9,101,5,9,9,4,9,99,3,9,102,5,9,9,101,5,9,9,1002,9,3,9,101,2,9,9,1002,9,4,9,4,9,99,3,9,101,3,9,9,1002,9,3,9,4,9,99,3,9,102,5,9,9,1001,9,3,9,4,9,99,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,1001,9,1,9,4,9,3,9,1001,9,2,9,4,9,99,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,99,3,9,101,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,99,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,1,9,9,4,9,99'
 
 aoc_5_input = '3,225,1,225,6,6,1100,1,238,225,104,0,1102,57,23,224,101,-1311,224,224,4,224,1002,223,8,223,101,6,224,224,1,223,224,223,1102,57,67,225,102,67,150,224,1001,224,-2613,224,4,224,1002,223,8,223,101,5,224,224,1,224,223,223,2,179,213,224,1001,224,-469,224,4,224,102,8,223,223,101,7,224,224,1,223,224,223,1001,188,27,224,101,-119,224,224,4,224,1002,223,8,223,1001,224,7,224,1,223,224,223,1,184,218,224,1001,224,-155,224,4,224,1002,223,8,223,1001,224,7,224,1,224,223,223,1101,21,80,224,1001,224,-101,224,4,224,102,8,223,223,1001,224,1,224,1,224,223,223,1101,67,39,225,1101,89,68,225,101,69,35,224,1001,224,-126,224,4,224,1002,223,8,223,1001,224,1,224,1,224,223,223,1102,7,52,225,1102,18,90,225,1101,65,92,225,1002,153,78,224,101,-6942,224,224,4,224,102,8,223,223,101,6,224,224,1,223,224,223,1101,67,83,225,1102,31,65,225,4,223,99,0,0,0,677,0,0,0,0,0,0,0,0,0,0,0,1105,0,99999,1105,227,247,1105,1,99999,1005,227,99999,1005,0,256,1105,1,99999,1106,227,99999,1106,0,265,1105,1,99999,1006,0,99999,1006,227,274,1105,1,99999,1105,1,280,1105,1,99999,1,225,225,225,1101,294,0,0,105,1,0,1105,1,99999,1106,0,300,1105,1,99999,1,225,225,225,1101,314,0,0,106,0,0,1105,1,99999,1007,226,226,224,102,2,223,223,1005,224,329,1001,223,1,223,108,677,226,224,1002,223,2,223,1005,224,344,1001,223,1,223,1007,677,677,224,1002,223,2,223,1005,224,359,1001,223,1,223,1107,677,226,224,102,2,223,223,1006,224,374,1001,223,1,223,8,226,677,224,1002,223,2,223,1006,224,389,101,1,223,223,8,677,677,224,102,2,223,223,1006,224,404,1001,223,1,223,1008,226,226,224,102,2,223,223,1006,224,419,1001,223,1,223,107,677,226,224,102,2,223,223,1006,224,434,101,1,223,223,7,226,226,224,1002,223,2,223,1005,224,449,1001,223,1,223,1107,226,226,224,1002,223,2,223,1006,224,464,1001,223,1,223,1107,226,677,224,1002,223,2,223,1005,224,479,1001,223,1,223,8,677,226,224,1002,223,2,223,1006,224,494,1001,223,1,223,1108,226,677,224,1002,223,2,223,1006,224,509,101,1,223,223,1008,677,677,224,1002,223,2,223,1006,224,524,1001,223,1,223,1008,677,226,224,102,2,223,223,1006,224,539,1001,223,1,223,1108,677,677,224,102,2,223,223,1005,224,554,101,1,223,223,108,677,677,224,102,2,223,223,1006,224,569,101,1,223,223,1108,677,226,224,102,2,223,223,1005,224,584,1001,223,1,223,108,226,226,224,1002,223,2,223,1005,224,599,1001,223,1,223,1007,226,677,224,102,2,223,223,1005,224,614,1001,223,1,223,7,226,677,224,102,2,223,223,1006,224,629,1001,223,1,223,107,226,226,224,102,2,223,223,1005,224,644,101,1,223,223,7,677,226,224,102,2,223,223,1005,224,659,101,1,223,223,107,677,677,224,1002,223,2,223,1005,224,674,1001,223,1,223,4,223,99,226'
@@ -90,68 +100,7 @@ TESTS_9_1=[
 TEST_9_204 = [('109,1,203,2,204,2,99', '109, 1, 203, 109109019, 204, 2, 99', [109109019], [109109019])]
 
 
-def run_tests(test_set, name=''):
-	count = 0
-	if(len(test_set) > 1):
-		print(f'running {name} series of {len(test_set)} tests')
-	for t in test_set:
-	#	print(f'\n{t}')
-		(test_prog, test_prog_expected_string, test_inputs, test_outputs) = t
-		test_prog = IntCodeMachine.parse_from_string(test_prog)
-		input_queue = Queue(maxsize=0)
-		for i in test_inputs:
-			input_queue.put_nowait(i)
-		output_queue = Queue(maxsize=0)
-		cpu = IntCodeMachine(test_prog, input_queue, output_queue)
-		test_results = cpu.run_program().asList()
-	#	print(test_prog)
-#		print(test_results)
-		program_outputs = []
-		while (not output_queue.empty()):
-			g = output_queue.get()
-			program_outputs.append(g)
-			output_queue.task_done()
-
-	#	print('', end='\t')
-	#	print(test_prog, end=' ')
-
-		test_prog_expected = IntCodeMachine.parse_from_string(test_prog_expected_string)
-
-#		print(f' -> {test_result}')
-		print(f'output={program_outputs}', end="")
-
-		failed = False
-		if (test_results != test_prog_expected):
-			failed = True
-		#	print(t)
-		#	print(f'error:  expected program state: {test_prog_expected} {type(test_prog_expected)}')
-	#		print(f'error:  received program state: {test_results} {type(test_results)}')
-			#print(f'raw string: {IntCodeMachine.code_to_string(test_results)}')
-		if (test_outputs != program_outputs):
-			failed = True
-	#		print(t)
-#			print(f'error: expected program output: {test_outputs}')
-#			print(f'error: received program output: {program_outputs}')
-
-		if failed:
-			sys.exit('test failed')
-		else:
-			print(f'\t: correct \t {program_outputs}')
-			count += 1
-	if (len(test_set) > 1):
-		print(f'series of tests {name} ran, {count} of {len(test_set)} correct: ', end='')
-		if(len(test_set) == count): print('OK')
-		else: print('errors found')
-
 def aoc9_part1():
-#	print('Part 1 Tests')
-#	run_tests(TESTS_1)
-
-#	print('Part 2 Tests')
-#	run_tests(TESTS_2)
-
-#	part1_input = '3,8,1001,8,10,8,105,1,0,0,21,38,59,84,97,110,191,272,353,434,99999,3,9,1002,9,2,9,101,4,9,9,1002,9,2,9,4,9,99,3,9,102,5,9,9,1001,9,3,9,1002,9,5,9,101,5,9,9,4,9,99,3,9,102,5,9,9,101,5,9,9,1002,9,3,9,101,2,9,9,1002,9,4,9,4,9,99,3,9,101,3,9,9,1002,9,3,9,4,9,99,3,9,102,5,9,9,1001,9,3,9,4,9,99,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,1001,9,1,9,4,9,3,9,1001,9,2,9,4,9,99,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,99,3,9,101,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,99,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,1,9,9,4,9,99'
-
 	part1_input = aoc_9_input
 	input_queue = Queue(maxsize=-1)
 	output_queue = Queue(maxsize=-1)
@@ -159,7 +108,7 @@ def aoc9_part1():
 	part1_code= IntCodeMachine.parse_from_string(part1_input)
 	part1_cpu = IntCodeMachine(part1_code, input_queue, output_queue)
 	result  =part1_cpu.run_program()
-	print(result)
+	#print(result)
 
 
 	program_outputs = []
@@ -168,70 +117,31 @@ def aoc9_part1():
 		program_outputs.append(g)
 		output_queue.task_done()
 
-	print(f'output: {program_outputs}')
+	#print(f'output: {program_outputs}')
+	return program_outputs
+def aoc9_part2():
+	part1_input = aoc_9_input
+	input_queue = Queue(maxsize=-1)
+	output_queue = Queue(maxsize=-1)
+	input_queue.put_nowait(2)
+	part1_code= IntCodeMachine.parse_from_string(part1_input)
+	part1_cpu = IntCodeMachine(part1_code, input_queue, output_queue)
+	result  =part1_cpu.run_program()
+	#print(result)
+
+
+	program_outputs = []
+	while (not output_queue.empty()):
+		g = output_queue.get()
+		program_outputs.append(g)
+		output_queue.task_done()
+
+	#print(f'output: {program_outputs}')
+	return program_outputs
 
 
 
 
-
-def send_phase( inputs, q_list):
-	for i in range(5):
-		q_list[i].put_nowait(inputs[i])
-
-
-def part2(phase,code):
-	# aoc7_part1()
-
-	test_4 = '3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5'
-	test_5 = '3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10'
-	phase_4 = [9, 8, 7, 6, 5]
-	phase_5 = [9, 7, 8, 5, 6]
-
-	#current_code = IntCodeMachine.parse_from_string(test_5)
-
-	current_code = IntCodeMachine.parse_from_string(code)
-
-	queue_a_to_b = Queue(maxsize=0)
-	queue_b_to_c = Queue(maxsize=0)
-	queue_c_to_d = Queue(maxsize=0)
-	queue_d_to_e = Queue(maxsize=0)
-	queue_e_to_a = Queue(maxsize=0)
-	q_list = [queue_e_to_a, queue_a_to_b, queue_b_to_c, queue_c_to_d, queue_d_to_e, ]
-
-	send_phase(phase, q_list)
-	queue_e_to_a.put_nowait(0)
-
-	cpu_A = IntCodeMachine(current_code, queue_e_to_a, queue_a_to_b)
-	cpu_B = IntCodeMachine(current_code, queue_a_to_b, queue_b_to_c)
-	cpu_C = IntCodeMachine(current_code, queue_b_to_c, queue_c_to_d)
-	cpu_D = IntCodeMachine(current_code, queue_c_to_d, queue_d_to_e)
-	cpu_E = IntCodeMachine(current_code, queue_d_to_e, queue_e_to_a)
-
-	cpu_list = [cpu_A, cpu_B, cpu_C, cpu_D, cpu_E]
-	cpu_name = ['cpu_A', 'cpu_B', 'cpu_C', 'cpu_D', 'cpu_E']
-	num_threads = 5
-	thread_list = []
-	for i in range(num_threads):
-		worker = Thread(target=cpu_list[i].run_program, name=cpu_name[i])
-		cpu_list[i].thread_name = cpu_name[i]
-		cpu_list[i].thread = worker
-		worker.setDaemon(False)
-		worker.start()
-		thread_list.append(worker)
-#	print("entering waits")
-	for t in thread_list:
-		t.join()
-#	print("all threads joined")
-	#time.sleep(2)
-#	print("\n")
-	#	for i in range(5):
-	#		print(f'{cpu_name[i]} last output: {cpu_list[i].last_output}')
-	for i in range(5):
-		while (not q_list[i].empty()):
-			result = q_list[i].get_nowait()
-#			print(f'{cpu_name[i]} left in queue: {result}')
-			q_list[i].task_done()
-	return result
 
 def output_queue_to_list(q):
 	result = []
@@ -247,9 +157,22 @@ def main():
 #	run_tests(P_TEST, name="Problem Test")
 #	run_tests(TESTS_9_1, name="Problem 9 Series")
 
-	aoc9_part1()
+	part1_answer = aoc9_part1()[0]
 
 
+	print(f' AoC 2019, Day 9')
+	print(f'\tpart 1:', end="")
+	if part1_answer != answer1:
+		print(f'\treceived: {part1_answer}, expected {answer1}')
+	else:
+		print(f'\tpart1: {part1_answer}')
+
+	part2_answer = aoc9_part2()[0]
+	print(f'\tpart 2:', end="")
+	if part2_answer != answer2:
+		print(f'\treceived: {part2_answer}, expected {answer2}')
+	else:
+		print(f'\tpart1: {part2_answer}')
 
 
 
