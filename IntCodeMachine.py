@@ -156,6 +156,7 @@ class IntCodeMachine:
 			raise Exception(f'invalid ParamMode:{p_mode}')
 		return loc
 
+	
 	def add(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
