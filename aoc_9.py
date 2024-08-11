@@ -242,12 +242,12 @@ def output_queue_to_list(q):
 
 def main():
 
-	#run_tests(TESTS_1, name="Test Set #1")
+#	run_tests(TESTS_1, name="Test Set #1")
 #	run_tests(TESTS_2, name="Test Set #2")
-	run_tests(P_TEST, name="Problem Test")
+#	run_tests(P_TEST, name="Problem Test")
 #	run_tests(TESTS_9_1, name="Problem 9 Series")
 
-#	aoc9_part1()
+	aoc9_part1()
 
 
 
