@@ -128,14 +128,14 @@ class IntCodeMachine:
 		if (p_m == ParamMode.POSITION_MODE):
 			loc = self.program[self.pc + p_number]
 			value = self.program[loc]
-			print(f'position mode p_m={p_number - 1}, loc: {loc}, value: {value}, yield {value}')
+	#		print(f'position mode p_m={p_number - 1}, loc: {loc}, value: {value}, yield {value}')
 		elif (p_m == ParamMode.IMMEDIATE_MODE):
 			value = self.program[self.pc + p_number]
-			print(f'immedate mode p_m={p_number - 1}, loc: {self.pc+p_number}, value: {value}, value {value}')
+	#		print(f'immedate mode p_m={p_number - 1}, loc: {self.pc+p_number}, value: {value}, value {value}')
 		elif (p_m == ParamMode.RELATIVE_MODE):
 			loc_adjust = self.program[self.pc + p_number] + self.relative_base
 			value = self.program[loc_adjust]
-			print(f'relative mode p_m={p_number - 1},, loc: {loc_adjust}, value: {value} adjust: {self.program[self.pc + p_number]} rb: {self.relative_base} ')
+	#		print(f'relative mode p_m={p_number - 1},, loc: {loc_adjust}, value: {value} adjust: {self.program[self.pc + p_number]} rb: {self.relative_base} ')
 		else:
 			print(f' invalud param')
 			raise Exception(f'invalid ParamMode:{p_mode}')
@@ -218,8 +218,8 @@ class IntCodeMachine:
 	def jump_if_true(self, p_modes):
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
-		print(f'\tjnz {self.program[self.pc+1]} {self.program[self.pc+2]}, num_1: {num_1} num_2: {num_2}')
-		print(f' tape[20] => {self.program[20]}')
+	#	print(f'\tjnz {self.program[self.pc+1]} {self.program[self.pc+2]}, num_1: {num_1} num_2: {num_2}')$
+	#	print(f' tape[20] => {self.program[20]}')
 
 		if (num_1 != 0):
 			self.pc = num_2
@@ -257,20 +257,20 @@ class IntCodeMachine:
 		return
 
 	def equals(self, p_modes):
-		print(f' p_modes: {p_modes}')
-		print("tape: ", end="")
-		for i in range(20):
-			print(f'{self.program[i]}, ', end="")
-		print()
-		print(f'\t\t GOAL: teq: av:17 bv: 8 eq: False to loc: 0 to 20')
-		print(f' loc[21]={self.program[21]}, loc[4]={self.program[4]}, loc[20]={self.program[20]}')
+	#	print(f' p_modes: {p_modes}')
+	#	print("tape: ", end="")
+	#	for i in range(20):
+	#		print(f'{self.program[i]}, ', end="")
+	#	print()
+	#	print(f'\t\t GOAL: teq: av:17 bv: 8 eq: False to loc: 0 to 20')
+	#	print(f' loc[21]={self.program[21]}, loc[4]={self.program[4]}, loc[20]={self.program[20]}')
 		num_1 = self.lookup_value(p_modes, 1)
 		num_2 = self.lookup_value(p_modes, 2)
 
 		num_3 = self.lookup_position(p_modes, 3)
-		print(f'using lookup, num_1: {num_1} num_2: {num_2} num_3: {num_3}')
+	#	print(f'using lookup, num_1: {num_1} num_2: {num_2} num_3: {num_3}')
 		self.program[num_3]= int(num_1 == num_2)
-		print(f'\t teq=> av: {num_1} bv: {num_2} eq: {num_1==num_2} to loc: {int(num_1==num_2)} to {num_3} ')
+	#	print(f'\t teq=> av: {num_1} bv: {num_2} eq: {num_1==num_2} to loc: {int(num_1==num_2)} to {num_3} ')
 
 
 		self.pc += self.pc_shift[self.equals]
@@ -296,17 +296,16 @@ class IntCodeMachine:
 		while True:
 		#	print(f'{self.program} \t pc={self.pc} \t rb={self.relative_base}')
 			instruction = self.program[self.pc]
-			print(f'pc: {self.pc} raw: {instruction}')
-			if self.pc == 6:
-				print(f'program: {self.program}')
-			if(instruction in self.watch_list):
-				self.watch = True
-				#print(f'pc={self.pc} \t rb={self.relative_base} code={self.program.asList()[self.pc:]} \t ')
+		#	print(f'pc: {self.pc} raw: {instruction}')
+
+		#	if(instruction in self.watch_list):
+		#		self.watch = True
+		#		#print(f'pc={self.pc} \t rb={self.relative_base} code={self.program.asList()[self.pc:]} \t ')
 			p_nodes = get_param_modes(instruction)
-			print(f'p_nodes: {p_nodes}')
+		#	print(f'p_nodes: {p_nodes}')
 			opcode_number = instruction % 100
 			operator = self.op_code[opcode_number]
-			print(f' pc: {self.pc}  opcode: {opcode_number}')
+		#	print(f' pc: {self.pc}  opcode: {opcode_number}')
 		#	if(instruction in self.watch_list):
 		#		self.watch = True
 		#		print(f'intrs = {instruction}  pc={self.pc}  rb={self.relative_base}  opcode = {operator} \t {p_nodes}  \t code={self.program.asList()[self.pc:self.pc+8]} ')
