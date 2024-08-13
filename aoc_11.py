@@ -4,14 +4,17 @@ aoc_11_program = '3,8,1005,8,358,1106,0,11,0,0,0,104,1,104,0,3,8,102,-1,8,10,100
 
 
 def aoc11_part1():
+    white_panels = set()
     part1_input = aoc_11_program
     input_queue = Queue(maxsize=-1)
     output_queue = Queue(maxsize=-1)
     # input_queue.put_nowait(1)
     part1_code = IntCodeMachine.parse_from_string(part1_input)
     part1_cpu = IntCodeMachine(part1_code, input_queue, output_queue)
-    result = part1_cpu.run_program()
-    # print(result)
+
+    (final_program, final_white_set) = part1_cpu.run_paint_robot(white_panels)
+    result = len(final_white_set)
+
 
     program_outputs = []
     while (not output_queue.empty()):
@@ -19,16 +22,21 @@ def aoc11_part1():
         program_outputs.append(g)
         output_queue.task_done()
 
-    # print(f'output: {program_outputs}')
-    return program_outputs
+    print(f'output: {program_outputs}')
+    return result
 
 
 def main():
+    print(f' AoC 2019, Day 11')
+    print(f'\tpart 1:', end="")
+
+
+
+    print()
     part1_answer = aoc11_part1()
     print(part1_answer)
 
-    print(f' AoC 2019, Day 11')
-    print(f'\tpart 1:', end="")
+
 
 
 #	if part1_answer != answer1:
