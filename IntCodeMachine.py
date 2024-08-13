@@ -3,6 +3,9 @@ from queue import Queue
 from threading import Thread
 
 
+class OutputStage(Enum):
+	First
+
 
 class ParamMode(Enum):
 	POSITION_MODE = 0
@@ -294,47 +297,58 @@ class IntCodeMachine:
 
 
 	def run_program(self):
-		#print(f'program: {self.program}')
 		while True:
-		#	print(f'{self.program} \t pc={self.pc} \t rb={self.relative_base}')
 			instruction = self.program[self.pc]
-
-
-
 			p_nodes = get_param_modes(instruction)
 
 			opcode_number = instruction % 100
 			operator = self.op_code[opcode_number]
-		#	print(f' pc: {self.pc}  opcode: {opcode_number}')
-
 			operator(p_nodes)
 			self.watch = False
 			if(operator == self.halt):
 				return self.program
 
 
-	def run_until_input(self):
-		#print(f'program: {self.program}')
-		while True:
-		#	print(f'{self.program} \t pc={self.pc} \t rb={self.relative_base}')
-			instruction = self.program[self.pc]
-		#	print(f'pc: {self.pc} raw: {instruction}')
 
-		#	if(instruction in self.watch_list):
-		#		self.watch = True
-		#		#print(f'pc={self.pc} \t rb={self.relative_base} code={self.program.asList()[self.pc:]} \t ')
+	def run_paint_robot(self, white_panels):
+
+
+		current_loc = (0,0)
+		while True:
+			print(f'white: {white_panels}')
+
+			instruction = self.program[self.pc]
 			p_nodes = get_param_modes(instruction)
-		#	print(f'p_nodes: {p_nodes}')
 			opcode_number = instruction % 100
 			operator = self.op_code[opcode_number]
-		#	print(f' pc: {self.pc}  opcode: {opcode_number}')
-		#	if(instruction in self.watch_list):
-		#		self.watch = True
-		#		print(f'intrs = {instruction}  pc={self.pc}  rb={self.relative_base}  opcode = {operator} \t {p_nodes}  \t code={self.program.asList()[self.pc:self.pc+8]} ')
-			operator(p_nodes)
+			if operator == self.input:
+				print(f'input \t {self.input_queue}')
+				if current_loc in white_panels:
+					input_value = 1
+				else:
+					input_value = 0
+				print(f'input @ {current_loc} -> {input_value}')
+				self.input_queue.put_nowait(input_value)
+				operator(p_nodes)
+				print(f'input done  \t {self.input_queue}')
+
+			elif operator == self.output():
+				print(f'output \t {self.output_queue}')
+				operator(p_nodes)
+				output_value = self.output_queue.get()
+				print(f'output {output_value}@ {current_loc}')
+
+
+				print(f'output done  \t {self.output_queue}')
+			else:
+				print(f'operator: {operator}')
+				operator(p_nodes)
 			self.watch = False
 			if(operator == self.halt):
-				return self.program
+				return (self.program, white_panels)
+
+
+
 
 	def compare_state(self, other_state):
 		if(self.run_program() == other_state):
