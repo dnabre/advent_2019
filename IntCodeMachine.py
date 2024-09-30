@@ -1,10 +1,27 @@
-from enum import Enum
+from enum import Enum, auto
 from queue import Queue
 from threading import Thread
 
 
-class OutputStage(Enum):
-	First
+
+
+
+#class OutputStage(Enum):
+#	First
+class PaintColor(Enum):
+	BLACK=0
+	WHITE=1
+
+class PainterRobotState(Enum):
+	START	  =auto()
+	GOT_COLOR =auto()
+	GOT_TURN =auto()
+
+class Dir(Enum):
+	UP = auto()
+	DOWN = auto()
+	LEFT = auto()
+	RIGHT = auto()
 
 
 class ParamMode(Enum):
@@ -61,6 +78,21 @@ class IntCodeMemory:
 
 	def asList(self):
 		return self.memory
+
+
+def step(loc, facing):
+	(x,y) = loc
+	match facing:
+		case Dir.UP:
+			return (x,y-1)
+		case Dir.RIGHT:
+			return (x+1,y)
+		case Dir.LEFT:
+			return (x-1,y)
+		case Dir.DOWN:
+			return (x,y+1)
+
+
 
 class IntCodeMachine:
 	input_queue: Queue
@@ -192,10 +224,10 @@ class IntCodeMachine:
 		else:
 			loc = self.program[self.pc + 1]  # location written to will never be in immediate mode
 			mode += 'UNKNOWN PARAMETER MODE'
-		print('reading input queue')
+		#print('reading input queue')
 		in_value = self.input_queue.get()
 		#if(self.watch):
-		print(f'{self.thread_name} inputting {in_value} to {loc} p={mode}\n', end='')
+		#print(f'{self.thread_name} inputting {in_value} to {loc} p={mode}\n', end='')
 		self.program[loc] = in_value
 		self.pc += self.pc_shift[self.input]
 		self.input_queue.task_done()
@@ -217,7 +249,7 @@ class IntCodeMachine:
 			output_value = self.lookup_value(p_modes, 1)
 
 		#if (self.watch):
-		print(f'{self.thread_name} outputting {output_value}\n', end='')
+		#print(f'{self.thread_name} outputting {output_value}\n', end='')
 		self.output_queue.put_nowait(output_value)
 		self.pc += self.pc_shift[self.output]
 		return
@@ -310,42 +342,86 @@ class IntCodeMachine:
 
 
 
-	def run_paint_robot(self, white_panels):
-
-
-		current_loc = (0,0)
+	def run_paint_robot(self, panels, mypainted):
+		painted = set()
+		loc = (0, 0)
+		state = PainterRobotState.START
+		color = PaintColor.WHITE
+		facing = Dir.UP
+		paint_count = 0
 		while True:
-			print(f'white: {white_panels}')
+			#	if paint_count > 50:
+			#		exit(-500)
+				#print(f'loc: {current_loc} panels painted: {len(painted)}')
+				instruction = self.program[self.pc]
+				p_nodes = get_param_modes(instruction)
+				opcode_number = instruction % 100
+				operator = self.op_code[opcode_number]
 
-			instruction = self.program[self.pc]
-			p_nodes = get_param_modes(instruction)
-			opcode_number = instruction % 100
-			operator = self.op_code[opcode_number]
-			if operator == self.input:
-				print(f'input \t {self.input_queue}')
-				if current_loc in white_panels:
-					input_value = 1
-				else:
-					input_value = 0
-				print(f'input @ {current_loc} -> {input_value}')
-				self.input_queue.put_nowait(input_value)
-				operator(p_nodes)
-				print(f'input done  \t {self.input_queue}')
+				match operator:
+					case self.input:
+						here_painted = 1 if loc in mypainted else 0
+				#		print(f'asking for input,  paint: {here_painted} @ {loc} facing {facing}\t\t\t panels painted: {len(painted)}')
+						self.input_queue.put_nowait(here_painted)
+						operator(p_nodes)
+					case self.output:
+						operator(p_nodes)
+						r = self.output_queue.get_nowait()
+						assert self.output_queue.empty()
+				#		print(f'robopainter output {r} \t state  {(state, color, facing, loc, paint_count, len(painted))}')
+						match state:
+							case PainterRobotState.GOT_COLOR:
+								#print("got color")
+								if r==0:
+								#	print(f"Turn left  {facing} -> ", end=" ")
+									match facing:
+										case Dir.UP:
+											facing = Dir.LEFT
+										case Dir.LEFT:
+											facing = Dir.DOWN
+										case Dir.DOWN:
+											facing = Dir.RIGHT
+										case Dir.RIGHT:
+											facing = Dir.UP
+								else:
+								#	print(f"Turn right {facing} -> ", end=" ")
+									match facing:
+										case Dir.UP:
+											facing = Dir.RIGHT
+										case Dir.LEFT:
+											facing = Dir.UP
+										case Dir.DOWN:
+											facing = Dir.LEFT
+										case Dir.RIGHT:
+											facing = Dir.DOWN
+								#print(f' {facing}')
+								#print(f'stepping one in {facing} from {loc} to ', end="")
+								loc = step(loc, facing)
+							#	print(f' {loc}')
+								state = PainterRobotState.START
+							case PainterRobotState.START:
+								#print("start")
+								panels[loc] = r
+								painted.add(loc)
+								paint_count = paint_count + 1
+								color = PaintColor.BLACK if r == 0 else PaintColor.WHITE
+								if color == PaintColor.WHITE:
+									print(f'painting {loc} to 1')
+									mypainted.add(loc)
+								else:
+									print(f'painting {loc} to 0')
+									mypainted.remove(loc)
+								state = PainterRobotState.GOT_COLOR
+							case _:
+								print(f'invalid robopainter state  {(state,color,facing,loc)}')
+								exit(-200)
+					case self.halt:
+						print(f'halting. white panel count: {len(mypainted)} paint_count: {paint_count}')
+						return (mypainted, panels, self.program)
+					case _:
+						operator(p_nodes)
 
-			elif operator == self.output():
-				print(f'output \t {self.output_queue}')
-				operator(p_nodes)
-				output_value = self.output_queue.get()
-				print(f'output {output_value}@ {current_loc}')
 
-
-				print(f'output done  \t {self.output_queue}')
-			else:
-				print(f'operator: {operator}')
-				operator(p_nodes)
-			self.watch = False
-			if(operator == self.halt):
-				return (self.program, white_panels)
 
 
 
