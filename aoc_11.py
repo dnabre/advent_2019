@@ -12,27 +12,22 @@ aoc_11_program = '3,8,1005,8,358,1106,0,11,0,0,0,104,1,104,0,3,8,102,-1,8,10,100
 #
 
 def aoc11_part1():
-    # Set of panels which have been painted with white paint
-
-    panels = defaultdict(int)
-    painted = set()
+    panels = defaultdict(int)  # maps (x,y) -> 0 or 1
 
     part1_input = aoc_11_program
     input_queue = Queue(maxsize=-1)
     output_queue = Queue(maxsize=-1)
-    # input_queue.put_nowait(1)
+
     part1_code = IntCodeMachine.parse_from_string(part1_input)
     part1_cpu = IntCodeMachine(part1_code, input_queue, output_queue)
-
-    (final_white_set,panels, final_program) = part1_cpu.run_paint_robot(panels,painted)
-
+    part1_cpu.run_paint_robot_day11_part1(panels)
     result = len(panels)
     return result
 
 def main():
     print(f' AoC 2019, Day 11')
 
-    print(f'\tpart 1:', end="")
+    print(f'\tpart 1:   ', end="")
     part1_answer = aoc11_part1()
     print(part1_answer)
 
