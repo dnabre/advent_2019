@@ -266,7 +266,7 @@ class IntCodeMachine:
         #	print(f'\tjnz {self.program[self.pc+1]} {self.program[self.pc+2]}, num_1: {num_1} num_2: {num_2}')$
         #	print(f' tape[20] => {self.program[20]}')
 
-        if (num_1 != 0):
+        if num_1 != 0:
             self.pc = num_2
         else:
             self.pc += self.pc_shift[self.jump_if_true]
@@ -329,7 +329,7 @@ class IntCodeMachine:
         return
 
 
-    def halt(self):
+    def halt(self, p_modes):
         # Handle closing queues and thread shutdown
         self.pc += self.pc_shift[self.halt]
         return
@@ -344,7 +344,7 @@ class IntCodeMachine:
             operator = self.op_code[opcode_number]
             operator(p_nodes)
             self.watch = False
-            if (operator == self.halt):
+            if operator == self.halt:
                 return self.program
 
 
@@ -358,7 +358,6 @@ class IntCodeMachine:
             p_nodes = get_param_modes(instruction)
             opcode_number = instruction % 100
             operator = self.op_code[opcode_number]
-
             match operator:
                 case self.input:
                     self.input_queue.put_nowait(panels[loc])
@@ -460,7 +459,7 @@ class IntCodeMachine:
 
 
     def compare_state(self, other_state):
-        if (self.run_program() == other_state):
+        if self.run_program() == other_state:
             return True
         else:
             return False
