@@ -398,22 +398,16 @@ class IntCodeMachine:
                             print(f'invalid robopainter state  {(state, color, facing, loc)}')
                             exit(-200)
                 case self.halt:
-                    return
+                    return len(panels)
                 case _:
                     operator(p_nodes)
 
-
-    def run_paint_robot(self, panels, mypainted):
-        painted = set()
+    def run_paint_robot_day11_part2(self, panels):
         loc = (0, 0)
         state = PainterRobotState.START
         color = PaintColor.WHITE
         facing = Dir.UP
-        paint_count = 0
         while True:
-            #	if paint_count > 50:
-            #		exit(-500)
-            # print(f'loc: {current_loc} panels painted: {len(painted)}')
             instruction = self.program[self.pc]
             p_nodes = get_param_modes(instruction)
             opcode_number = instruction % 100
@@ -421,20 +415,14 @@ class IntCodeMachine:
 
             match operator:
                 case self.input:
-                    here_painted = 1 if loc in mypainted else 0
-                    #		print(f'asking for input,  paint: {here_painted} @ {loc} facing {facing}\t\t\t panels painted: {len(painted)}')
-                    self.input_queue.put_nowait(here_painted)
+                    self.input_queue.put_nowait(panels[loc])
                     operator(p_nodes)
                 case self.output:
                     operator(p_nodes)
                     r = self.output_queue.get_nowait()
-                    assert self.output_queue.empty()
-                    #		print(f'robopainter output {r} \t state  {(state, color, facing, loc, paint_count, len(painted))}')
                     match state:
                         case PainterRobotState.GOT_COLOR:
-                            # print("got color")
                             if r == 0:
-                                #	print(f"Turn left  {facing} -> ", end=" ")
                                 match facing:
                                     case Dir.UP:
                                         facing = Dir.LEFT
@@ -445,7 +433,6 @@ class IntCodeMachine:
                                     case Dir.RIGHT:
                                         facing = Dir.UP
                             else:
-                                #	print(f"Turn right {facing} -> ", end=" ")
                                 match facing:
                                     case Dir.UP:
                                         facing = Dir.RIGHT
@@ -455,32 +442,20 @@ class IntCodeMachine:
                                         facing = Dir.LEFT
                                     case Dir.RIGHT:
                                         facing = Dir.DOWN
-                            # print(f' {facing}')
-                            # print(f'stepping one in {facing} from {loc} to ', end="")
                             loc = step(loc, facing)
-                            #	print(f' {loc}')
                             state = PainterRobotState.START
                         case PainterRobotState.START:
-                            # print("start")
                             panels[loc] = r
-                            painted.add(loc)
-                            paint_count = paint_count + 1
                             color = PaintColor.BLACK if r == 0 else PaintColor.WHITE
-                            if color == PaintColor.WHITE:
-                                print(f'painting {loc} to 1')
-                                mypainted.add(loc)
-                            else:
-                                print(f'painting {loc} to 0')
-                                mypainted.remove(loc)
                             state = PainterRobotState.GOT_COLOR
                         case _:
                             print(f'invalid robopainter state  {(state, color, facing, loc)}')
                             exit(-200)
                 case self.halt:
-                    print(f'halting. white panel count: {len(mypainted)} paint_count: {paint_count}')
-                    return (mypainted, panels, self.program)
+                    return panels
                 case _:
                     operator(p_nodes)
+
 
 
 
