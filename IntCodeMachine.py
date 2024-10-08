@@ -204,8 +204,6 @@ class IntCodeMachine:
         self.program[num_3] = result
         self.pc += self.pc_shift[self.add]
         return
-
-
     def multiple(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         num_2 = self.lookup_value(p_modes, 2)
@@ -215,8 +213,6 @@ class IntCodeMachine:
         self.program[num_3] = result
         self.pc += self.pc_shift[self.multiple]
         return
-
-
     def input(self, p_modes):
         mode = ''
         if (p_modes[0] == ParamMode.POSITION_MODE):
@@ -236,8 +232,6 @@ class IntCodeMachine:
         self.pc += self.pc_shift[self.input]
         self.input_queue.task_done()
         return
-
-
     def output(self, p_modes):
         # print(f'instruction {self.program[self.pc]}, {p_modes}')
         mode = ''
@@ -258,8 +252,6 @@ class IntCodeMachine:
         self.output_queue.put_nowait(output_value)
         self.pc += self.pc_shift[self.output]
         return
-
-
     def jump_if_true(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         num_2 = self.lookup_value(p_modes, 2)
@@ -271,8 +263,6 @@ class IntCodeMachine:
         else:
             self.pc += self.pc_shift[self.jump_if_true]
         return
-
-
     def jump_if_false(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         num_2 = self.lookup_value(p_modes, 2)
@@ -281,8 +271,6 @@ class IntCodeMachine:
         else:
             self.pc += self.pc_shift[self.jump_if_false]
         return
-
-
     def less_than(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         num_2 = self.lookup_value(p_modes, 2)
@@ -300,8 +288,6 @@ class IntCodeMachine:
             self.program[num_3] = 0
         self.pc += self.pc_shift[self.less_than]
         return
-
-
     def equals(self, p_modes):
         #	print(f' p_modes: {p_modes}')
         #	print("tape: ", end="")
@@ -320,20 +306,15 @@ class IntCodeMachine:
 
         self.pc += self.pc_shift[self.equals]
         return
-
-
     def adj_base(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         self.relative_base += num_1
         self.pc += self.pc_shift[self.adj_base]
         return
-
-
     def halt(self, p_modes):
         # Handle closing queues and thread shutdown
         self.pc += self.pc_shift[self.halt]
         return
-
 
     def run_program(self):
         while True:
@@ -455,6 +436,46 @@ class IntCodeMachine:
                 case _:
                     operator(p_nodes)
 
+
+    def run_paint_robot_day13_part1(self, cell_counts):
+        loc_x = None
+        loc_y = None
+        tile_id = None
+        input_state = 0
+        output_count =0
+        while True:
+            instruction = self.program[self.pc]
+            p_nodes = get_param_modes(instruction)
+            opcode_number = instruction % 100
+            operator = self.op_code[opcode_number]
+            match operator:
+                case self.input:
+                    print(f'reach unexpected instruction: {operator}')
+                    # self.input_queue.put_nowait()
+                    operator(p_nodes)
+                case self.output:
+                    operator(p_nodes)
+                    r = self.output_queue.get_nowait()
+                    output_count = output_count + 1
+                    match input_state:
+                        case 0:     # x position
+                            loc_x = r
+                            input_state = input_state + 1
+                        case 1:     # y positoin
+                            loc_y = r
+                            input_state = input_state + 1
+                        case 2:     # tild id
+                            tile_id = r
+                            input_state = 0
+                            # print(f'output loc: ({loc_x},{loc_y}) tile_id: {tile_id}  o_count = {output_count//3}   (raw {output_count})')
+                            cell_counts[tile_id] = cell_counts[tile_id] + 1
+                        case _:
+                            print(f'Receive unexpected output from program: {input_state}')
+                            exit(-1)
+                case self.halt:
+                    return cell_counts
+                case _:
+                    operator(p_nodes)
 
 
 
