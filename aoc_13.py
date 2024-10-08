@@ -25,7 +25,7 @@ class TileID(Enum):
 
 
 def aoc13_part1():
-    cell_counts = defaultdict(int)  # maps (x,y) -> 0 or 1
+    cell_counts = defaultdict(int)  # maps tileid -> number of occurrences
 
     part1_input = aoc_13_program
     input_queue = Queue(maxsize=-1)
@@ -35,11 +35,21 @@ def aoc13_part1():
     part1_cpu = IntCodeMachine(part1_code, input_queue, output_queue)
     result_cell_counts = part1_cpu.run_paint_robot_day13_part1(cell_counts)
 
-    return cell_counts[TileID.BLOCK.value]
+    return result_cell_counts[TileID.BLOCK.value]
 
 def aoc13_part2():
+    screen = defaultdict(int)  # maps (x,y) -> 0 or 1
+    points2 = defaultdict(int)
+    part2_input = aoc_13_program
+    input_queue = Queue(maxsize=-1)
+    output_queue = Queue(maxsize=-1)
 
-    return None
+    part2_code = IntCodeMachine.parse_from_string(part2_input)
+    part2_code[0]=2
+    part2_cpu = IntCodeMachine(part2_code, input_queue, output_queue)
+    final_score = part2_cpu.run_paint_robot_day13_part2(points2)
+
+    return final_score
 
 
 def main():
