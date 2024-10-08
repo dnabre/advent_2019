@@ -14,10 +14,18 @@ aoc_13_program = '1,380,379,385,1008,2159,116649,381,1005,381,12,99,109,2160,110
 part1_correct= 280
 part2_correct= 13298
 
+class TileID(Enum):
+    EMPTY   = 0
+    WALL    = 1
+    BLOCK   = 2
+    PADDLE  = 3
+    BALL    = 4
+
+
 
 
 def aoc13_part1():
-    panels = defaultdict(int)  # maps (x,y) -> 0 or 1
+    cell_counts = defaultdict(int)  # maps (x,y) -> 0 or 1
 
     part1_input = aoc_13_program
     input_queue = Queue(maxsize=-1)
@@ -25,8 +33,9 @@ def aoc13_part1():
 
     part1_code = IntCodeMachine.parse_from_string(part1_input)
     part1_cpu = IntCodeMachine(part1_code, input_queue, output_queue)
-    result = part1_cpu.run_paint_robot_day11_part1(panels)
-    return result
+    result_cell_counts = part1_cpu.run_paint_robot_day13_part1(cell_counts)
+
+    return cell_counts[TileID.BLOCK.value]
 
 def aoc13_part2():
 
