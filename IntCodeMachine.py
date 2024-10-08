@@ -1,3 +1,4 @@
+from collections import defaultdict
 from enum import Enum, auto
 from queue import Queue
 
@@ -477,10 +478,8 @@ class IntCodeMachine:
                 case _:
                     operator(p_nodes)
 
-    def run_paint_robot_day13_part2(self, points2):
-
-
-
+    def run_paint_robot_day13_part2(self):
+        screen = defaultdict(int)
         inputs = []
         while True:
             instruction = self.program[self.pc]
@@ -488,19 +487,21 @@ class IntCodeMachine:
             opcode_number = instruction % 100
             operator = self.op_code[opcode_number]
 
-            # print(f'instr: {instruction}  p_nodes: {p_nodes} opcode_number: {opcode_number}')
-            # print(f'       operator: {operator}')
-
             match operator:
                 case self.input:
 
                     ball_x = None
                     paddle_x = None
-                    for ((x,y), tile) in points2.items() :
+                    for ((x,_), tile) in screen.items() :
                         if tile == 4:
                             ball_x = x
+                            if paddle_x is not None:
+                                break
                         if tile == 3:
                             paddle_x = x
+                            if ball_x is not None:
+                                break
+
                     value_to_input = 0
 
                     if ball_x < paddle_x:
@@ -515,20 +516,17 @@ class IntCodeMachine:
                 case self.output:
                     operator(p_nodes)
                     r = self.output_queue.get_nowait()
-                    # for (x, y), tile in points2.items():
                     inputs.append(r)
                     if len(inputs) == 3:  # We have received three parts of an input.
                         if inputs[:2] != [-1, 0]:
-                            points2[inputs[0], inputs[1]] = inputs[2]
+                            screen[inputs[0], inputs[1]] = inputs[2]
                         else:
                             score = inputs[2]
-                            # print(f"score: {score}")
                         inputs.clear()
                 case self.halt:
                     return score
                 case _:
                     operator(p_nodes)
-
 
     def compare_state(self, other_state):
         if self.run_program() == other_state:
