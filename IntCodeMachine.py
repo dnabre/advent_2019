@@ -2,7 +2,7 @@ from collections import defaultdict
 from enum import Enum, auto
 from queue import Queue
 
-
+STOP_VALUE = -389374567890
 # class OutputStage(Enum):
 #	First
 class PaintColor(Enum):
@@ -107,6 +107,7 @@ class IntCodeMachine:
         self.program = IntCodeMemory(initial_state)
         # self.program = initial_state.copy()
         self.original_state = initial_state.copy()
+        self.halted = False
         self.pc = 0
         self.relative_base = 0
         self.input_queue = input_queue
@@ -214,6 +215,12 @@ class IntCodeMachine:
         self.program[num_3] = result
         self.pc += self.pc_shift[self.multiple]
         return
+    def stop(self):
+        # print(f'Machine {self.thread_name} stop requested')
+        self.halted = True
+        self.input_queue.put_nowait(STOP_VALUE)
+        return
+
     def input(self, p_modes):
         mode = ''
         if (p_modes[0] == ParamMode.POSITION_MODE):
@@ -225,13 +232,19 @@ class IntCodeMachine:
         else:
             loc = self.program[self.pc + 1]  # location written to will never be in immediate mode
             mode += 'UNKNOWN PARAMETER MODE'
-        # print('reading input queue')
+        # print(f'\t |CPU-input| reading input queue... ', end="")
         in_value = self.input_queue.get()
+        # print(f'\t |CPU-input| received {in_value}')
+        self.input_queue.task_done()
+        if in_value == STOP_VALUE:
+            # print("IntMachine read STOP_VALUE during input")
+            self.halted = True
+            return
         # if(self.watch):
         # print(f'{self.thread_name} inputting {in_value} to {loc} p={mode}\n', end='')
         self.program[loc] = in_value
         self.pc += self.pc_shift[self.input]
-        self.input_queue.task_done()
+
         return
     def output(self, p_modes):
         # print(f'instruction {self.program[self.pc]}, {p_modes}')
@@ -250,8 +263,11 @@ class IntCodeMachine:
 
         # if (self.watch):
         # print(f'{self.thread_name} outputting {output_value}\n', end='')
+        # print(f'\t \t |CPU-output| outputting {output_value}... ' , end="")
         self.output_queue.put_nowait(output_value)
+        # print("\t |CPU-output| done")
         self.pc += self.pc_shift[self.output]
+        # print("\t |CPU-output| output opcode done")
         return
     def jump_if_true(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
@@ -320,13 +336,18 @@ class IntCodeMachine:
     def run_program(self):
         while True:
             instruction = self.program[self.pc]
+            # print(f'|CPU| - {instruction}')
             p_nodes = get_param_modes(instruction)
 
             opcode_number = instruction % 100
             operator = self.op_code[opcode_number]
+            if self.halted:
+                # print("Manual HALT")
+                return self.program
             operator(p_nodes)
             self.watch = False
             if operator == self.halt:
+                # print("Program Halted")
                 return self.program
 
 
@@ -438,7 +459,7 @@ class IntCodeMachine:
                     operator(p_nodes)
 
 
-    def run_paint_robot_day13_part1(self, cell_counts):
+    def run_day13_part1(self, cell_counts):
         loc_x = None
         loc_y = None
         tile_id = None
@@ -478,7 +499,7 @@ class IntCodeMachine:
                 case _:
                     operator(p_nodes)
 
-    def run_paint_robot_day13_part2(self):
+    def run_day13_part2(self):
         screen = defaultdict(int)
         inputs = []
         while True:
@@ -493,6 +514,96 @@ class IntCodeMachine:
                     ball_x = None
                     paddle_x = None
                     for ((x,_), tile) in screen.items() :
+                        if tile == 4:
+                            ball_x = x
+                            if paddle_x is not None:
+                                break
+                        if tile == 3:
+                            paddle_x = x
+                            if ball_x is not None:
+                                break
+
+                    value_to_input = 0
+
+                    if ball_x < paddle_x:
+                        value_to_input = -1
+                    if ball_x > paddle_x:
+                        value_to_input = 1
+                    if ball_x == paddle_x:
+                        value_to_input = 0
+                    self.input_queue.put_nowait(value_to_input)
+                    operator(p_nodes)
+
+                case self.output:
+                    operator(p_nodes)
+                    r = self.output_queue.get_nowait()
+                    inputs.append(r)
+                    if len(inputs) == 3:  # We have received three parts of an input.
+                        if inputs[:2] != [-1, 0]:
+                            screen[inputs[0], inputs[1]] = inputs[2]
+                        else:
+                            score = inputs[2]
+                        inputs.clear()
+                case self.halt:
+                    return score
+                case _:
+                    operator(p_nodes)
+
+    def run_day15_part1(self, cell_counts):
+        loc_x = None
+        loc_y = None
+        tile_id = None
+        input_state = 0
+        output_count = 0
+        while True:
+            instruction = self.program[self.pc]
+            p_nodes = get_param_modes(instruction)
+            opcode_number = instruction % 100
+            operator = self.op_code[opcode_number]
+            match operator:
+                case self.input:
+                    print(f'reach unexpected instruction: {operator}')
+                    # self.input_queue.put_nowait()
+                    operator(p_nodes)
+                case self.output:
+                    operator(p_nodes)
+                    r = self.output_queue.get_nowait()
+                    output_count = output_count + 1
+                    match input_state:
+                        case 0:  # x position
+                            loc_x = r
+                            input_state = input_state + 1
+                        case 1:  # y positoin
+                            loc_y = r
+                            input_state = input_state + 1
+                        case 2:  # tild id
+                            tile_id = r
+                            input_state = 0
+                            # print(f'output loc: ({loc_x},{loc_y}) tile_id: {tile_id}  o_count = {output_count//3}   (raw {output_count})')
+                            cell_counts[tile_id] = cell_counts[tile_id] + 1
+                        case _:
+                            print(f'Receive unexpected output from program: {input_state}')
+                            exit(-1)
+                case self.halt:
+                    return cell_counts
+                case _:
+                    operator(p_nodes)
+
+    def run_day15_part2(self):
+        screen = defaultdict(int)
+        inputs = []
+        while True:
+            instruction = self.program[self.pc]
+            p_nodes = get_param_modes(instruction)
+            opcode_number = instruction % 100
+            operator = self.op_code[opcode_number]
+
+            match operator:
+                case self.input:
+
+                    ball_x = None
+                    paddle_x = None
+                    for ((x, _), tile) in screen.items():
                         if tile == 4:
                             ball_x = x
                             if paddle_x is not None:

@@ -24,7 +24,7 @@ def aoc13_part1():
 
     part1_code = IntCodeMachine.parse_from_string(part1_input)
     part1_cpu = IntCodeMachine(part1_code, input_queue, output_queue)
-    result_cell_counts = part1_cpu.run_paint_robot_day13_part1(cell_counts)
+    result_cell_counts = part1_cpu.run_day13_part1(cell_counts)
 
     return result_cell_counts[2]
 
@@ -38,7 +38,7 @@ def aoc13_part2():
     part2_code = IntCodeMachine.parse_from_string(part2_input)
     part2_code[0]=2
     part2_cpu = IntCodeMachine(part2_code, input_queue, output_queue)
-    final_score = part2_cpu.run_paint_robot_day13_part2()
+    final_score = part2_cpu.run_day13_part2()
 
     return final_score
 
