@@ -81,7 +81,7 @@ class IntCodeMemory:
     def __str__(self):
         return self.memory.__str__()
 
-    def asList(self):
+    def as_list(self):
         return self.memory
 
 
@@ -460,9 +460,6 @@ class IntCodeMachine:
 
 
     def run_day13_part1(self, cell_counts):
-        loc_x = None
-        loc_y = None
-        tile_id = None
         input_state = 0
         output_count =0
         while True:
@@ -481,15 +478,12 @@ class IntCodeMachine:
                     output_count = output_count + 1
                     match input_state:
                         case 0:     # x position
-                            loc_x = r
                             input_state = input_state + 1
                         case 1:     # y positoin
-                            loc_y = r
                             input_state = input_state + 1
                         case 2:     # tild id
                             tile_id = r
                             input_state = 0
-                            # print(f'output loc: ({loc_x},{loc_y}) tile_id: {tile_id}  o_count = {output_count//3}   (raw {output_count})')
                             cell_counts[tile_id] = cell_counts[tile_id] + 1
                         case _:
                             print(f'Receive unexpected output from program: {input_state}')
@@ -502,6 +496,7 @@ class IntCodeMachine:
     def run_day13_part2(self):
         screen = defaultdict(int)
         inputs = []
+        score =0
         while True:
             instruction = self.program[self.pc]
             p_nodes = get_param_modes(instruction)
@@ -550,9 +545,6 @@ class IntCodeMachine:
                     operator(p_nodes)
 
     def run_day15_part1(self, cell_counts):
-        loc_x = None
-        loc_y = None
-        tile_id = None
         input_state = 0
         output_count = 0
         while True:
@@ -571,15 +563,12 @@ class IntCodeMachine:
                     output_count = output_count + 1
                     match input_state:
                         case 0:  # x position
-                            loc_x = r
                             input_state = input_state + 1
                         case 1:  # y positoin
-                            loc_y = r
                             input_state = input_state + 1
                         case 2:  # tild id
                             tile_id = r
                             input_state = 0
-                            # print(f'output loc: ({loc_x},{loc_y}) tile_id: {tile_id}  o_count = {output_count//3}   (raw {output_count})')
                             cell_counts[tile_id] = cell_counts[tile_id] + 1
                         case _:
                             print(f'Receive unexpected output from program: {input_state}')
@@ -592,6 +581,7 @@ class IntCodeMachine:
     def run_day15_part2(self):
         screen = defaultdict(int)
         inputs = []
+        score = 0
         while True:
             instruction = self.program[self.pc]
             p_nodes = get_param_modes(instruction)
