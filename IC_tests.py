@@ -12,7 +12,7 @@ def run_tests(test_set, name=''):
 			input_queue.put_nowait(i)
 		output_queue = Queue(maxsize=0)
 		cpu = IntCodeMachine(test_prog, input_queue, output_queue)
-		test_results = cpu.run_program().asList()
+		test_results = cpu.run_program().as_list()
 	#	print(test_prog)
 #		print(test_results)
 		program_outputs = []
