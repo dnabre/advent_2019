@@ -234,7 +234,7 @@ class IntCodeMachine:
             mode += 'UNKNOWN PARAMETER MODE'
         # print(f'\t |CPU-input| reading input queue... ', end="")
         in_value = self.input_queue.get()
-        # print(f'\t |CPU-input| received {in_value}')
+        #print(f'\t |CPU-input| received {in_value}')
         self.input_queue.task_done()
         if in_value == STOP_VALUE:
             # print("IntMachine read STOP_VALUE during input")
@@ -263,9 +263,9 @@ class IntCodeMachine:
 
         # if (self.watch):
         # print(f'{self.thread_name} outputting {output_value}\n', end='')
-        # print(f'\t \t |CPU-output| outputting {output_value}... ' , end="")
+        #print(f'\t \t |CPU-output| outputting {output_value}... ' , end="")
         self.output_queue.put_nowait(output_value)
-        # print("\t |CPU-output| done")
+        #print("\t |CPU-output| done")
         self.pc += self.pc_shift[self.output]
         # print("\t |CPU-output| output opcode done")
         return
