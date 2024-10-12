@@ -3,6 +3,8 @@ from enum import Enum, auto
 from queue import Queue
 
 STOP_VALUE = -389374567890
+
+
 # class OutputStage(Enum):
 #	First
 class PaintColor(Enum):
@@ -102,7 +104,6 @@ class IntCodeMachine:
     input_queue: Queue
     output_queue: Queue
 
-
     def __init__(self, initial_state, input_queue, output_queue):
         self.program = IntCodeMemory(initial_state)
         # self.program = initial_state.copy()
@@ -142,7 +143,6 @@ class IntCodeMachine:
             99: self.halt,
         }
 
-
     @staticmethod
     def parse_from_string(s):
         array_strings = s.split(',')
@@ -152,14 +152,12 @@ class IntCodeMachine:
             result.append(num)
         return result
 
-
     @staticmethod
     def code_to_string(c):
         result = ""
         for instruct in c:
             result += f'{instruct},'
         return result[:-1]
-
 
     def lookup_value(self, p_mode, p_number):
         p_m = p_mode[p_number - 1]
@@ -179,7 +177,6 @@ class IntCodeMachine:
             raise Exception(f'invalid ParamMode:{p_mode}')
         return value
 
-
     def lookup_position(self, p_mode, p_number):
         p_m = p_mode[p_number - 1]
         if (p_m == ParamMode.POSITION_MODE):
@@ -195,7 +192,6 @@ class IntCodeMachine:
             raise Exception(f'invalid ParamMode:{p_mode}')
         return loc
 
-
     def add(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         num_2 = self.lookup_value(p_modes, 2)
@@ -206,6 +202,7 @@ class IntCodeMachine:
         self.program[num_3] = result
         self.pc += self.pc_shift[self.add]
         return
+
     def multiple(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         num_2 = self.lookup_value(p_modes, 2)
@@ -215,6 +212,7 @@ class IntCodeMachine:
         self.program[num_3] = result
         self.pc += self.pc_shift[self.multiple]
         return
+
     def stop(self):
         # print(f'Machine {self.thread_name} stop requested')
         self.halted = True
@@ -234,7 +232,7 @@ class IntCodeMachine:
             mode += 'UNKNOWN PARAMETER MODE'
         # print(f'\t |CPU-input| reading input queue... ', end="")
         in_value = self.input_queue.get()
-        #print(f'\t |CPU-input| received {in_value}')
+        # print(f'\t |CPU-input| received {in_value}')
         self.input_queue.task_done()
         if in_value == STOP_VALUE:
             # print("IntMachine read STOP_VALUE during input")
@@ -246,6 +244,7 @@ class IntCodeMachine:
         self.pc += self.pc_shift[self.input]
 
         return
+
     def output(self, p_modes):
         # print(f'instruction {self.program[self.pc]}, {p_modes}')
         mode = ''
@@ -263,12 +262,13 @@ class IntCodeMachine:
 
         # if (self.watch):
         # print(f'{self.thread_name} outputting {output_value}\n', end='')
-        #print(f'\t \t |CPU-output| outputting {output_value}... ' , end="")
+        # print(f'\t \t |CPU-output| outputting {output_value}... ' , end="")
         self.output_queue.put_nowait(output_value)
-        #print("\t |CPU-output| done")
+        # print("\t |CPU-output| done")
         self.pc += self.pc_shift[self.output]
         # print("\t |CPU-output| output opcode done")
         return
+
     def jump_if_true(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         num_2 = self.lookup_value(p_modes, 2)
@@ -280,6 +280,7 @@ class IntCodeMachine:
         else:
             self.pc += self.pc_shift[self.jump_if_true]
         return
+
     def jump_if_false(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         num_2 = self.lookup_value(p_modes, 2)
@@ -288,6 +289,7 @@ class IntCodeMachine:
         else:
             self.pc += self.pc_shift[self.jump_if_false]
         return
+
     def less_than(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         num_2 = self.lookup_value(p_modes, 2)
@@ -305,6 +307,7 @@ class IntCodeMachine:
             self.program[num_3] = 0
         self.pc += self.pc_shift[self.less_than]
         return
+
     def equals(self, p_modes):
         #	print(f' p_modes: {p_modes}')
         #	print("tape: ", end="")
@@ -323,11 +326,13 @@ class IntCodeMachine:
 
         self.pc += self.pc_shift[self.equals]
         return
+
     def adj_base(self, p_modes):
         num_1 = self.lookup_value(p_modes, 1)
         self.relative_base += num_1
         self.pc += self.pc_shift[self.adj_base]
         return
+
     def halt(self, p_modes):
         # Handle closing queues and thread shutdown
         self.pc += self.pc_shift[self.halt]
@@ -349,7 +354,6 @@ class IntCodeMachine:
             if operator == self.halt:
                 # print("Program Halted")
                 return self.program
-
 
     def run_paint_robot_day11_part1(self, panels):
         loc = (0, 0)
@@ -458,10 +462,9 @@ class IntCodeMachine:
                 case _:
                     operator(p_nodes)
 
-
     def run_day13_part1(self, cell_counts):
         input_state = 0
-        output_count =0
+        output_count = 0
         while True:
             instruction = self.program[self.pc]
             p_nodes = get_param_modes(instruction)
@@ -477,11 +480,11 @@ class IntCodeMachine:
                     r = self.output_queue.get_nowait()
                     output_count = output_count + 1
                     match input_state:
-                        case 0:     # x position
+                        case 0:  # x position
                             input_state = input_state + 1
-                        case 1:     # y positoin
+                        case 1:  # y positoin
                             input_state = input_state + 1
-                        case 2:     # tild id
+                        case 2:  # tild id
                             tile_id = r
                             input_state = 0
                             cell_counts[tile_id] = cell_counts[tile_id] + 1
@@ -496,7 +499,7 @@ class IntCodeMachine:
     def run_day13_part2(self):
         screen = defaultdict(int)
         inputs = []
-        score =0
+        score = 0
         while True:
             instruction = self.program[self.pc]
             p_nodes = get_param_modes(instruction)
@@ -508,7 +511,7 @@ class IntCodeMachine:
 
                     ball_x = None
                     paddle_x = None
-                    for ((x,_), tile) in screen.items() :
+                    for ((x, _), tile) in screen.items():
                         if tile == 4:
                             ball_x = x
                             if paddle_x is not None:
