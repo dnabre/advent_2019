@@ -116,8 +116,11 @@ class IntCodeMachine:
         self.thread = ()
         self.thread_name = ''
         self.last_output = ()
+        self.net_step = 0
+        self.networked = False
         self.watch = False
         self.watch_list = [21107, 21108]
+        self.debug=False
         self.pc_shift = {
             self.add: 4,
             self.multiple: 4,
@@ -231,9 +234,19 @@ class IntCodeMachine:
             loc = self.program[self.pc + 1]  # location written to will never be in immediate mode
             mode += 'UNKNOWN PARAMETER MODE'
         # print(f'\t |CPU-input| reading input queue... ', end="")
-        in_value = self.input_queue.get()
+        if self.networked:
+            if self.input_queue.empty():
+                if self.debug: print(f'cpu {self.thread_name} input queue empty, giving -1')
+                in_value = -1
+            else:
+                in_value = self.input_queue.get_nowait()
+                self.input_queue.task_done()
+                if self.debug: print(f'reading input from queue, {in_value}')
+        else:
+            in_value = self.input_queue.get()
+            self.input_queue.task_done()
         # print(f'\t |CPU-input| received {in_value}')
-        self.input_queue.task_done()
+
         if in_value == STOP_VALUE:
             # print("IntMachine read STOP_VALUE during input")
             self.halted = True
@@ -259,7 +272,10 @@ class IntCodeMachine:
         else:
             mode += 'UNKNOWN PARAMETER MODE'
             output_value = self.lookup_value(p_modes, 1)
-
+        if self.networked:
+            if self.debug: print(f'output (cpu= {self.thread_name}), {output_value}, net_step={self.net_step} ->  ', end="")
+            self.net_step  += 1
+            if self.debug: print(self.net_step)
         # if (self.watch):
         # print(f'{self.thread_name} outputting {output_value}\n', end='')
         # print(f'\t \t |CPU-output| outputting {output_value}... ' , end="")
@@ -354,6 +370,26 @@ class IntCodeMachine:
             if operator == self.halt:
                 # print("Program Halted")
                 return self.program
+
+    def step_program(self):
+    #        print(f'step program self.pc = {self.pc}')
+            instruction = self.program[self.pc]
+            p_nodes = get_param_modes(instruction)
+
+            opcode_number = instruction % 100
+            operator = self.op_code[opcode_number]
+            if self.halted:
+                return False
+            operator(p_nodes)
+            if operator == self.halt:
+                self.halted = True
+                return False
+    #        print(f'step program self.pc = {self.pc}')
+            return True
+
+
+
+
 
     def run_paint_robot_day11_part1(self, panels):
         loc = (0, 0)
