@@ -101,8 +101,7 @@ def step(loc, facing):
 
 
 class IntCodeMachine:
-    input_queue: Queue
-    output_queue: Queue
+    idle_set = set()
 
     def __init__(self, initial_state, input_queue, output_queue):
         self.program = IntCodeMemory(initial_state)
@@ -236,9 +235,12 @@ class IntCodeMachine:
         # print(f'\t |CPU-input| reading input queue... ', end="")
         if self.networked:
             if self.input_queue.empty():
+                IntCodeMachine.idle_set.add(self.thread_name)
                 if self.debug: print(f'cpu {self.thread_name} input queue empty, giving -1')
                 in_value = -1
             else:
+                if self.thread_name in IntCodeMachine.idle_set:
+                    IntCodeMachine.idle_set.remove(self.thread_name)
                 in_value = self.input_queue.get_nowait()
                 self.input_queue.task_done()
                 if self.debug: print(f'reading input from queue, {in_value}')
@@ -273,6 +275,8 @@ class IntCodeMachine:
             mode += 'UNKNOWN PARAMETER MODE'
             output_value = self.lookup_value(p_modes, 1)
         if self.networked:
+            if self.thread_name in IntCodeMachine.idle_set:
+                IntCodeMachine.idle_set.remove(self.thread_name)
             if self.debug: print(f'output (cpu= {self.thread_name}), {output_value}, net_step={self.net_step} ->  ', end="")
             self.net_step  += 1
             if self.debug: print(self.net_step)
