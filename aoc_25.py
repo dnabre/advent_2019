@@ -7,7 +7,7 @@ from IntCodeMachine import *
 # Part 2:
 #Weight required: food ration, space law space brochure, mutex, mouse, asterisk
 
-part1_correct = None
+part1_correct = 234095120
 part2_correct = None
 
 CURRENT_FILE = 'aoc_25_input.txt'
