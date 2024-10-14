@@ -58,13 +58,6 @@ def string_to_2d_list(s):
         result += [list(p)]
     return result
 
-
-def print_world(world):
-    for line in world:
-        sline = ''.join(line)
-        print(sline)
-
-
 def full_copy_world(w):
     return copy.deepcopy(w)
 
@@ -336,14 +329,6 @@ def part2(problem):
         layers = next_layers
     answer=  sum(sum(sum(row) for row in layer) for layer in layers)
     return answer
-
-def add_new_locs(possible_locs, a_list):
-    for a in a_list:
-        if a in possible_locs:
-            continue
-        else:
-            possible_locs.append(a)
-    return possible_locs
 
 
 def main():
