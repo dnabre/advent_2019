@@ -279,43 +279,40 @@ def get_adj_locations(z, r, c):
 
 
 
-def get_surrounding_2(x, y, layer):
-    surrounding = []
+def look_around(x, y, layer, layers):
+    neightbors = []
     if y > 0:
-        surrounding.append(layers[layer][y - 1][x])
+        neightbors.append(layers[layer][y - 1][x])
     else:
         if layer != 0:
-            surrounding.append(layers[layer - 1][1][2])
+            neightbors.append(layers[layer - 1][1][2])
     if y < 4:
-        surrounding.append(layers[layer][y + 1][x])
+        neightbors.append(layers[layer][y + 1][x])
     else:
         if layer != 0:
-            surrounding.append(layers[layer - 1][3][2])
+            neightbors.append(layers[layer - 1][3][2])
     if x > 0:
-        surrounding.append(layers[layer][y][x - 1])
+        neightbors.append(layers[layer][y][x - 1])
     else:
         if layer != 0:
-            surrounding.append(layers[layer - 1][2][1])
+            neightbors.append(layers[layer - 1][2][1])
     if x < 4:
-        surrounding.append(layers[layer][y][x + 1])
+        neightbors.append(layers[layer][y][x + 1])
     else:
         if layer != 0:
-            surrounding.append(layers[layer - 1][2][3])
+            neightbors.append(layers[layer - 1][2][3])
     if x == y == 2:
         return []
     if layer != len(layers) - 1:
         if (x, y) == (2, 1):
-            surrounding.extend(layers[layer + 1][0])
+            neightbors.extend(layers[layer + 1][0])
         if (x, y) == (2, 3):
-            surrounding.extend(layers[layer + 1][-1])
+            neightbors.extend(layers[layer + 1][-1])
         if (x, y) == (1, 2):
-            surrounding.extend(i[0] for i in layers[layer + 1])
+            neightbors.extend(i[0] for i in layers[layer + 1])
         if (x, y) == (3, 2):
-            surrounding.extend(i[-1] for i in layers[layer + 1])
-    return surrounding
-
-
-
+            neightbors.extend(i[-1] for i in layers[layer + 1])
+    return neightbors
 
 
 def part2(problem):
@@ -323,55 +320,22 @@ def part2(problem):
               [[int(i == "#") for i in j] for j in problem.splitlines()],
               [[0 for _ in range(5)] for _ in range(5)], ]
 
-    bugs=[]
-    world = string_to_2d_list(problem)
-    initial_state = full_copy_world(world)
-    for r in range(5):
-        for c in range(5):
-            if (r == 2) and (c == 2):
-                continue
-            else:
-                if (world[r][c] == '#'):
-                    bugs.append((0, r, c))
-    min_count = 0
-
-    print(f'bug count: {len(bugs)}, {min_count} minutes elapsed')
-
-    for t in range(201):
-        if t==10:
-            return len(bugs)
-        if t==200:
-            print(f'after {t} {len(bugs)} bugs present')
-            return len(bugs)
-
-        new_bugs = []
-        possible_new_bugs = []
-        for b in bugs:
-            (l, r, c) = b
-            a_list = get_adj_locations(l, r, c)
-            ad_bug_count = 0
-            possible_new_bugs = add_new_locs(possible_new_bugs, a_list)
-            for loc in a_list:
-                if loc in bugs:
-                    ad_bug_count += 1
-            if (ad_bug_count == 1):
-                new_bugs.append(b)
-        for emp_space in possible_new_bugs:
-            (l, r, c) = emp_space
-            a_list = get_adj_locations(l, r, c)
-            ad_bug_count = 0
-            for loc in a_list:
-                if loc in bugs:
-                    ad_bug_count += 1
-            if (ad_bug_count == 1) or (ad_bug_count == 2):
-                new_bugs.append(emp_space)
-        min_count += 1
-        bugs = new_bugs
-        if t%10 == 0:
-            print(f'after {t} {len(bugs)} bugs present')
-
-
-#	print(f'bug count: {len(bugs)}, {min_count} minutes elapsed')
+    for minute in range(200):
+        layers_len = len(layers)
+        next_layers = [[[0 for _ in range(5)] for _ in range(5)]]
+        for i in range(layers_len):
+            current_layer = layers[i]
+            next_grid = []
+            for y in range(5):
+                next_grid.append(
+                    # fiddled with until it got a sensible result. no idea what it's actually doing at this point
+                    [(1 if sum(look_around(x, y, i, layers)) == 1 else 0) if current_layer[y][x] == 1 else (
+                        1 if sum(look_around(x, y, i, layers)) in {1, 2} else 0) for x in range(5)])
+            next_layers.append(next_grid)
+        next_layers.append([[0 for _ in range(5)] for _ in range(5)])
+        layers = next_layers
+    answer=  sum(sum(sum(row) for row in layer) for layer in layers)
+    return answer
 
 def add_new_locs(possible_locs, a_list):
     for a in a_list:
@@ -390,15 +354,7 @@ def main():
 
     problem = all_file.strip()
 
-
-
-    # if all_file != problem:
-    # 	print(f'all_file: \n {all_file}')
-    # 	print(f'problem : \n {problem}')
-
     print(f'\tpart 1:   ', end="")
-
-
     part1_answer = part1(problem)
     if part1_answer != part1_correct:
         print(f'\n\t\t INCORRECT ANSWER')
@@ -407,10 +363,10 @@ def main():
     else:
         print(f'{part1_answer} \t\t\t ')
 
-    #print(f'\tpart 2:   ', end="")
-    part2_answer = 0
+    print(f'\tpart 2:   ', end="")
+
     part2_answer = part2(problem)
-    #print(part2_answer)
+
     if part2_answer != part2_correct:
         print(f'\n\t\t INCORRECT ANSWER')
         print(f'\t\t Should be: {part2_correct} ')
