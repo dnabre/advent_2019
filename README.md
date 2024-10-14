@@ -3,11 +3,11 @@
 
 | Problem |                            | 1                                                                           | 2                                                                          |
 | --- |----------------------------|-----------------------------------------------------------------------------|----------------------------------------------------------------------------|
-| [Day 1: The Tyranny of the Rocket Equation](https://adventofcode.com/2019/day/1)  | Simple Math                | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_1.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_1.py)  |
+| [Day 1: The Tyranny of the Rocket Equation](https://adventofcode.com/2019/day/1) | Simple Math                | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_1.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_1.py)  |
 | [Day 2: 1202 Program Alarm](https://adventofcode.com/2019/day/2)  | IntCode                    | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_2.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_2.py)  |
 | [Day 3: Crossed Wires](https://adventofcode.com/2019/day/3)  | Tracing Path in 2D         | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_3.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_3.py)  |
 | [Day 4: Secure Container](https://adventofcode.com/2019/day/4)  | Number Search              | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_4.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_4.py)  |
-| [Day 5: Sunny with a Chance of Asteroids](https://adventofcode.com/2019/day/5)  | IntCode                    | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_5.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_5.py)  |
+| [Day 5: Sunny with a Chance of Asteroids](https://adventofcode.com/2019/day/5) | IntCode                    | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_5.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_5.py)  |
 | [Day 6: Universal Orbit Map](https://adventofcode.com/2019/day/6)  | Orbit Graph                | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_6.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_6.py)  |
 | [Day 7: Amplification Circuit](https://adventofcode.com/2019/day/7)  | IntCode                    | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_7.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_7.py)  |
 | [Day 8: Space Image Format](https://adventofcode.com/2019/day/8)  | Array Manipulation         | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_8.py)   | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_8.py)  |
@@ -26,7 +26,7 @@
 | [Day 21: Springdroid Adventure ](https://adventofcode.com/2019/day/21) | IntCode, Springdroid       | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_21.py)  | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_21.py) |
 | [Day 22: Slam Shuffle](https://adventofcode.com/2019/day/22) | Modulo Arithmetic          | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_22.py)  | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_22.py) |
 | [Day 23: Category Six ](https://adventofcode.com/2019/day/23) | IntCode Networking         | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_23.py)  | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_23.py) |
-| [Day 24: Planet of Discord†† : ](https://adventofcode.com/2019/day/24) | Celluar Automata           | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_24.py)  | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_24.py) |
+| [Day 24: Planet of Discord : ](https://adventofcode.com/2019/day/24) | Celluar Automata           | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_24.py)  | [*](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_24.py) |
 | [Day 25: Cryostatis ](https://adventofcode.com/2019/day/25)  | IntCode                    | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_25.py)  | [ ](https://raw.githubusercontent.com/dnabre/advent_2019/master/aoc_25.py) |
 
 
