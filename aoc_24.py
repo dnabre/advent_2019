@@ -2,7 +2,7 @@ import copy
 
 # AoC 2019 Day 24
 # Part 1:   19516944
-# Part 2:
+# Part 2:   2006
 
 part1_correct = 19516944
 part2_correct = 2006
@@ -332,7 +332,7 @@ def part2(problem):
 
 
 def main():
-    print(f' AoC 2019, Day 18')
+    print(f' AoC 2019, Day 24')
 
     with open(CURRENT_FILE, 'r') as input_file:
         all_file = input_file.read()
