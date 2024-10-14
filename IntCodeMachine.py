@@ -376,7 +376,6 @@ class IntCodeMachine:
                 return self.program
 
     def step_program(self):
-    #        print(f'step program self.pc = {self.pc}')
             instruction = self.program[self.pc]
             p_nodes = get_param_modes(instruction)
 
@@ -388,8 +387,9 @@ class IntCodeMachine:
             if operator == self.halt:
                 self.halted = True
                 return False
-    #        print(f'step program self.pc = {self.pc}')
             return True
+
+
 
 
 
