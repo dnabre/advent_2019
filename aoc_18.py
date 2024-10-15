@@ -1,36 +1,23 @@
-
-import os
-import collections
-import string
-
-import numpy as np
-
 # AoC 2019 Day 18
 # Part 1:
 # Part 2:
-#
 
-part1_correct= 4042
-part2_correct= 2014
-
-
-
-
-
-def print_map(m):
-	for y in range(0,len(m[0])):
-		for x in range(0,len(m)):
-			print(m[x][y],end='')
-		print()
-
+part1_correct = 4042
+part2_correct = 2014
 
 CURRENT_FILE = 'aoc_18_input.txt'
 
 
+def print_map(m):
+    for y in range(0, len(m[0])):
+        for x in range(0, len(m)):
+            print(m[x][y], end='')
+        print()
+
 
 start_loc = None
-keys=dict()
-doors=dict()
+keys = dict()
+doors = dict()
 loweralpha_to_num = dict()
 upperalpha_to_num = dict()
 num_to_loweralpha = dict()
@@ -39,87 +26,74 @@ num_keys = 0
 empty_key_string = ''
 
 
+def part1(all_file):
+    global start_loc
+    global keys
+    global doors
+    global loweralpha_to_num
+    global upperalpha_to_num
+    global num_to_loweralpha
+    global num_to_upperalpha
+    global num_keys
+    global empty_key_string
 
-def part1():
-	print('AOC_2019\t 18\n\n')
-	global start_loc
-	global keys
-	global doors
-	global loweralpha_to_num
-	global upperalpha_to_num
-	global num_to_loweralpha
-	global num_to_upperalpha
-	global num_keys
-	global empty_key_string
+    map2 = all_file
 
+    lines = map2.split('\n')
+    height = len(lines)
+    width = len(lines[0])
 
+    print((width, height))
+    map = []
+    for l in lines:
+        map.append(list(l))
 
+    map = [*zip(*map)]
+    r = []
+    for t in map:
+        r.append(list(t))
 
-	with open(CURRENT_FILE, 'r') as input_file:
-		all_file = input_file.read()
-	
+    map = r
 
-	map2=all_file
-	
-	
+    # for y in range(0,height):
+    #	for x in range(0,width):
+    #		print(map[x][y],end='')
+    #	print()
 
-	
-	lines = map2.split('\n')
-	height = len(lines)
-	width = len(lines[0])
+    print_map(map)
 
-	print((width,height))
-	map=[]	
-	for l in lines:
-		map.append(list(l))
-	
-	map = [*zip(*map)]
-	r=[]
-	for t in map:
-		r.append(list(t))
-	
-	map=r
+    return None
 
-	#for y in range(0,height):
-	#	for x in range(0,width):
-	#		print(map[x][y],end='')
-	#	print()
-
-	print_map(map)
-
-	return None
-
-def part2():
-	return None
+def part2(all_file):
+    return None
 
 
 def main():
-	print(f' AoC 2019, Day 18')
+    print(f' AoC 2019, Day 18')
 
-	print(f'\tpart 1:   ', end="")
+    with open(CURRENT_FILE, 'r') as input_file:
+        all_file = input_file.read()
 
-	part1_answer= part1()
+    print(f'\tpart 1:   ', end="")
 
-	if part1_answer != part1_correct:
-		print(f'\n\t\t INCORRECT ANSWER')
-		print(f'\t\t Should be: {part1_correct} ')
-		print(f'\t\t Received : {part1_answer}')
-	else:
-		print(f'{part1_answer} \t\t\t ')
+    part1_answer = part1(all_file)
+    if part1_answer != part1_correct:
+        print(f'\n\t\t INCORRECT ANSWER')
+        print(f'\t\t Should be: {part1_correct} ')
+        print(f'\t\t Received : {part1_answer}')
+    else:
+        print(f'{part1_answer} \t\t\t ')
 
-	print(f'\tpart 2:   ', end="")
+    print(f'\tpart 2:   ', end="")
 
-	part2_answer = part2()
+    part2_answer = part2(all_file)
 
-	if part2_answer != part2_correct:
-		print(f'\n\t\t INCORRECT ANSWER')
-		print(f'\t\t Should be: {part2_correct} ')
-		print(f'\t\t Received : {part2_answer}')
-	else:
-		print(f'{part2_answer} \t\t\t ')
-
-
-
+    if part2_answer != part2_correct:
+        print(f'\n\t\t INCORRECT ANSWER')
+        print(f'\t\t Should be: {part2_correct} ')
+        print(f'\t\t Received : {part2_answer}')
+    else:
+        print(f'{part2_answer} \t\t\t ')
 
 
 if __name__ == "__main__":
