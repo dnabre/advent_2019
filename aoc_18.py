@@ -225,17 +225,22 @@ def part1(all_file):
             # for c_edge in n.edges:
             #     nn = coord_to_node[c_edge]
             #     print(f'\t\t {nn}')
-        else:
+        elif n.value == 'a':
             print(n)
             print(f'\t {n.get_weighted_edge_list()}')
-            for c in n.edges:
-                if c in poi_node_list:
-                    nn = coord_to_node[c]
-                    print(f"_\t\t {nn}")
-            if len(n.edges) == 1:
-                c = n.edges[0]
-                nn = coord_to_node[c]
-                print(f"_\t\t {nn}")
+            for ic in range(len(n.edges)):
+                c = n.edges[ic]
+                cn = coord_to_node[c]
+                print(f'\t\t {cn}')
+                cw = cn.edge_weight[ic]
+                for c_edge in cn.edges:
+                    e_i = cn.edges.index(c_edge)
+                    ew = cn.edge_weight[e_i]
+                    en = coord_to_node[c_edge]
+                    print(f'\t\t\t {en}  cw={cw}, ew={ew} = {cw+ew}')
+
+        else:
+            pass
     return None
 
 
