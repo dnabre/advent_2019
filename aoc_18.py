@@ -2,7 +2,6 @@
 # Part 1:
 # Part 2:
 from collections import defaultdict
-from idlelib.runscript import indent_message
 
 part1_correct = 4042
 part2_correct = 2014
@@ -111,7 +110,6 @@ def part1(all_file):
     print("\n shrinking graph")
     merge_or_discard = True
 
-
     while merge_or_discard:
         merge_or_discard = False
         merge_count = None
@@ -125,45 +123,24 @@ def part1(all_file):
                     (x1, y1) = n.edges[0]
                     (x2, y2) = n.edges[1]
 
-                    # print(n)
-                    # print(f'{n.value} @ {n.coord} have edges: {n.edges}')
+
                     n1 = coord_to_node[(x1, y1)]
 
                     n2 = coord_to_node[(x2, y2)]
 
-                    # print(f'\t\t{n1} \t {n1.get_weighted_edge_list()}')
-                    # print(f'\t\t{n2} \t {n2.get_weighted_edge_list()}')
-
                     i1 = n1.edges.index(n.coord)
                     i2 = n2.edges.index(n.coord)
-                    # i1 = i2 = -1
-                    # for i in range(len(n1.edges)):
-                    #     if n.coord == n1.edges[i]:
-                    #         i1 = i
-                    #         e1 = n1.edges[i]
-                    #         break
-                    # for i in range(len(n2.edges)):
-                    #     if n.coord == n2.edges[i]:
-                    #         i2 = i
-                    #         e2 =n2.edges[i]
-                    #         break
                     (w1, w2) = (n1.edge_weight[i1], n2.edge_weight[i2])
-                    # print(f'\t\tneighbors know me: {i1}|{i2}   {e1} w: {w1}  ___ {e2} w: {w2}')
                     n1.edges.pop(i1)
                     n2.edges.pop(i2)
                     new_weight = w1 + w2
                     n1.edge_weight.pop(i1)
                     n2.edge_weight.pop(i2)
-                    # print(f'\t removing myself ({n.coord}')
-                    # print(f'\t\t{n1} \t {n1.get_weighted_edge_list()}')
-                    # print(f'\t\t{n2} \t {n2.get_weighted_edge_list()}')
                     n1.edges.append(n2.coord)
                     n1.edge_weight.append(new_weight)
                     n2.edges.append(n1.coord)
                     n2.edge_weight.append(new_weight)
-                    # print(f'\t adding new edge')
-                    # print(f'\t\t{n1} \t {n1.get_weighted_edge_list()}')
-                    # print(f'\t\t{n2} \t {n2.get_weighted_edge_list()}')
+
                     merge_count += 1
                     merged_nodes.append(n)
 
@@ -171,17 +148,17 @@ def part1(all_file):
                 pass  # print('f {len(n.edges)} is too many for me ')
 
             assert (merge_count == len(merged_nodes))
-            if merge_count > 0 : merge_or_discard = True
-            print(f'merged_nodes ({len(merged_nodes)}): {list(map(lambda n: (n.value, n.coord), merged_nodes))}')
+            if merge_count > 0: merge_or_discard = True
+            #        print(f'merged_nodes ({len(merged_nodes)}): {list(map(lambda n: (n.value, n.coord), merged_nodes))}')
             path_count -= merge_count
             for m in merged_nodes:
                 node_list.remove(m)
                 path_list.remove(m)
                 coord_to_node.pop(m.coord)
-            print(
-                f'merge {merge_count} nodes, leaving {len(path_list)} path nodes, {len(poi_node_list)} poi nodes {len(node_list)} total')
+        #         print(
+        #            f'merge {merge_count} nodes, leaving {len(path_list)} path nodes, {len(poi_node_list)} poi nodes {len(node_list)} total')
 
-        print("\nlooking for dandling nodes")
+        #    print("\nlooking for dandling nodes")
 
         discard_count = None
         while discard_count == None or discard_count > 0:
@@ -201,46 +178,103 @@ def part1(all_file):
                         n1.edge_weight.pop(i)
                         discard_nodes.append(n)
                         discard_count += 1
-            if discard_count > 0 : merge_or_discard
+            if discard_count > 0: merge_or_discard
             for m in discard_nodes:
                 node_list.remove(m)
                 path_list.remove(m)
-                path_count -=1
+                path_count -= 1
                 coord_to_node.pop(m.coord)
-            print(f'found {discard_count} dangling nodes, leaving {len(path_list)} path nodes, {len(poi_node_list)} poi nodes {len(node_list)} total')
+    #           print(f'found {discard_count} dangling nodes, leaving {len(path_list)} path nodes, {len(poi_node_list)} poi nodes {len(node_list)} total')
     edges_nums = defaultdict(lambda: 0)
     for n in node_list:
         e_count = len(n.edges)
         edges_nums[e_count] += 1
     print(edges_nums)
+    print(f'leaving {len(path_list)} path nodes, {len(poi_node_list)} poi nodes {len(node_list)} total')
     print(len(node_list))
-
-
     print(f'there are {len(path_list)} or {path_count} non-POI nodes remaining')
 
-    for n in node_list:
-        if n.value == EMPTY:
-            pass
-            # print(n)
-            # for c_edge in n.edges:
-            #     nn = coord_to_node[c_edge]
-            #     print(f'\t\t {nn}')
-        elif n.value == 'a':
-            print(n)
-            print(f'\t {n.get_weighted_edge_list()}')
-            for ic in range(len(n.edges)):
-                c = n.edges[ic]
-                cn = coord_to_node[c]
-                print(f'\t\t {cn}')
-                cw = cn.edge_weight[ic]
-                for c_edge in cn.edges:
-                    e_i = cn.edges.index(c_edge)
-                    ew = cn.edge_weight[e_i]
-                    en = coord_to_node[c_edge]
-                    print(f'\t\t\t {en}  cw={cw}, ew={ew} = {cw+ew}')
+    # we want to eliminate all p_nodes
+    for p_node in path_list:
+        neigh_value_list = list(map(lambda c: coord_to_node[c].value, p_node.edges))
+        print(f'working p_node: {p_node}  {neigh_value_list} ')
+        print(f' edges: {edges_nums[p_node]}')  # B-(66,1) t-(79,1) n-(65,5)
+        print(f'\t edge weights: {p_node.edge_weight}') # 1   12  30
+        p_coords = p_node.coord
 
-        else:
-            pass
+        for left_coord_i  in range(len(p_node.edges)):
+                left_coords = p_node.edges[left_coord_i]
+                left_node = coord_to_node[left_coords]
+                left_weight = p_node.edge_weight[left_coord_i]
+                print(f'\t left node {left_node.value} @ {left_coords} distance: {left_weight}')
+                for right_coord_i in range(len(p_node.edges)):
+                    right_coords = p_node.edges[right_coord_i]
+                    if left_coords == right_coords: continue
+                    right_node = coord_to_node[right_coords]
+                    right_weight = p_node.edge_weight[right_coord_i]
+                    print(f'adding new links from {left_node.value} <-> {right_node.value}')
+                    print(f'\t right node {right_node.value} @ {right_coords} distance: {right_weight}')
+
+
+
+                    print()
+                    print(f'\t\t left_node {left_node} {list(map(lambda c: coord_to_node[c].value, left_node.edges))}')
+                    print(f'\t\t\t edges: {left_node.edges}')
+                    print(f'\t\t\t weights {left_node.edge_weight}')
+
+                    print()
+                    print(f'\t\t right_node {right_node} {list(map(lambda c: coord_to_node[c].value, right_node.edges))}')
+                    print(f'\t\t\t edges: {right_node.edges}')
+                    print(f'\t\t\t weights {right_node.edge_weight}')
+
+
+                    #add new edge left->right
+                    left_node.edges.append(right_coords)
+                    left_node.edge_weight.append(left_weight+right_weight)
+                    #add new edge right->left
+                    right_node.edges.append(left_coords)
+                    right_node.edge_weight.append(right_weight+left_weight)
+
+                    left_p_idx = left_node.edges.index(p_coords)
+                    left_node.edges.pop(left_p_idx)
+                    left_node.edge_weight.pop(left_p_idx)
+
+                    right_p_idx = right_node.edges.index(p_coords)
+                    right_node.edges.pop(right_p_idx)
+                    right_node.edge_weight.pop(right_p_idx)
+
+                    print()
+                    print(f'\t\t left_node {left_node} {list(map(lambda c: coord_to_node[c].value, left_node.edges))}')
+                    print(f'\t\t\t edges: {left_node.edges}')
+                    print(f'\t\t\t weights {left_node.edge_weight}')
+
+                    print()
+                    print(
+                        f'\t\t right_node {right_node} {list(map(lambda c: coord_to_node[c].value, right_node.edges))}')
+                    print(f'\t\t\t edges: {right_node.edges}')
+                    print(f'\t\t\t weights {right_node.edge_weight}')
+
+
+                break
+
+                # n1 = coord_to_node[(x1, y1)]
+                # n2 = coord_to_node[(x2, y2)]
+                # i1 = n1.edges.index(n.coord)
+                # i2 = n2.edges.index(n.coord)
+                # (w1, w2) = (n1.edge_weight[i1], n2.edge_weight[i2])
+                # n1.edges.pop(i1)
+                # n2.edges.pop(i2)
+                # new_weight = w1 + w2
+                # n1.edge_weight.pop(i1)
+                # n2.edge_weight.pop(i2)
+                # n1.edges.append(n2.coord)
+                # n1.edge_weight.append(new_weight)
+                # n2.edges.append(n1.coord)
+                # n2.edge_weight.append(new_weight)
+
+        break
+
+
     return None
 
 
