@@ -1,0 +1,48 @@
+
+grid  Y coords: Ln 52 Col 67
+graph Y coords: (66, 51)
+
+graph -> grid  ->  (x,y) -> (y+1, x+1)
+
+
+                        p_node
+
+      p_to_l_weiht     /      \  p_to_r_weight
+                      /         \
+           left_node              right_node
+
+
+
+           L1   \           /  R1
+           L2   -- p_node  -   R2
+           L3   /           \  R3
+
+       (B--\          / t
+            p_node--/
+       n--/
+
+(p,B)       - \
+(p,n)       -  | ==>    (B,B), (B,n) , (B,t)
+(p,t)       - /         (n,B)  (n,n) , (n,t)
+                        (t,B)  (t,n),  (t,t)
+
+
+working p_node: <N: . @ (67, 1)
+   neigh: [(66, 1), (79, 1), (65, 5)]>
+		merge edge #0 and #1
+		coords (66, 1) and (79, 1)
+		merge edge #0 and #2
+		coords (66, 1) and (65, 5)
+graph -> grid  ->  (x,y) -> (y+1, x+1)
+
+   42
+n <---> t
+
+   now:
+
+p_node    (67,1)   -> grid (2,68)
+        neigh 0: (66,1) w 1   g(2,67)
+        neigh 1: (79,1) w 12  g(2,80)
+        neigh 2: (65,5) w 30  g(6,66)
+
+   node_0 -> node_1 -> node
