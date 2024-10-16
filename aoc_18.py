@@ -33,7 +33,14 @@ class Node:
         self.coord = coord
         self.value = value
         self.edges = edges
-        self.edge_weight = defaultdict(lambda:1)
+        self.edge_weight = [1]*len(edges)
+    def get_weighted_edge_list(self):
+        result = []
+        for i in range(0, len(self.edges)):
+            w = self.edge_weight[i]
+            e = self.edges[i]
+            result.append((e, w))
+        return result
 
 def neighbors(x,y):
     return [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]
@@ -63,7 +70,7 @@ def part1(all_file):
     start_node = None
 
     path_count = 0
-
+    path_list = []
     for y in range(0,GRID_SIZE+1):
 
         for x in range(0,GRID_SIZE+1):
@@ -96,7 +103,9 @@ def part1(all_file):
                     # print(f'door node {n} adding {ch} @ {(x, y)} to poi')
                     poi_to_node[ch] = n
                 else:
-                   assert(ch == '.')
+                    assert(ch == '.')
+                    path_list.append(n)
+                    path_count += 1
                 print('.', end='')
         print()
 
@@ -108,8 +117,12 @@ def part1(all_file):
     print(list(map(lambda n: n.value, key_list )))
     print(f'door_list ({len(door_list)} elms): {door_list}')
     print(list(map(lambda n: n.value, key_list)))
+    print(f'path_list ({len(path_list)} elms): {path_list}')
+    print(f'path_count: {path_count}, should match len(path_list): {len(path_list)}')
+    print()
     print(f'startnode: {start_node}')
-
+    print(f'\t weights: {start_node.edge_weight}')
+    print(f'\t edge w/ weights: {start_node.get_weighted_edge_list()}')
 
     return None
 def part2(all_file):
