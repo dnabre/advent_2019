@@ -1,6 +1,7 @@
 # AoC 2019 Day 18
 # Part 1:
 # Part 2:
+from collections import defaultdict
 
 part1_correct = 4042
 part2_correct = 2014
@@ -8,62 +9,109 @@ part2_correct = 2014
 CURRENT_FILE = 'aoc_18_input.txt'
 
 
-def print_map(m):
-    for y in range(0, len(m[0])):
-        for x in range(0, len(m)):
-            print(m[x][y], end='')
-        print()
+# def print_map(m):
+#     for y in range(0, len(m[0])):
+#         for x in range(0, len(m)):
+#             print(m[x][y], end='')
+#         print()
+#
+
+'''
+Node
+  key = (x,y) coordinate
+  contains (nothing, key, door)
+  connects to [(x,y)..... 
+'''
+
+class Node:
+    def __str__(self):
+        return "<N: {} @ {} neigh: {}>".format(self.value, self.coord, self.edges)
+
+    def __init__(self, coord, value, edges):
+        if value == '#':
+            print(f'error Node created with value {value} (WALL) at {coord} with edges {edges}')
+        self.coord = coord
+        self.value = value
+        self.edges = edges
+        self.edge_weight = defaultdict(lambda:1)
+
+def neighbors(x,y):
+    return [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]
+
+GRID_SIZE = 80
+
+WALL='#'
+EMPTY='.'
+KEYS=set(map(chr,range(ord('a'),ord('z')+1)))
+DOORS=set(map(chr,range(ord('A'),ord('Z')+1)))
 
 
-start_loc = None
-keys = dict()
-doors = dict()
-loweralpha_to_num = dict()
-upperalpha_to_num = dict()
-num_to_loweralpha = dict()
-num_to_upperalpha = dict()
-num_keys = 0
-empty_key_string = ''
 
 
 def part1(all_file):
-    global start_loc
-    global keys
-    global doors
-    global loweralpha_to_num
-    global upperalpha_to_num
-    global num_to_loweralpha
-    global num_to_upperalpha
-    global num_keys
-    global empty_key_string
+    print()
 
-    map2 = all_file
 
-    lines = map2.split('\n')
-    height = len(lines)
-    width = len(lines[0])
+    grid = all_file.split('\n')
 
-    print((width, height))
-    map = []
-    for l in lines:
-        map.append(list(l))
+    door_list = []
+    key_list = []
 
-    map = [*zip(*map)]
-    r = []
-    for t in map:
-        r.append(list(t))
+    coord_to_node = dict()
+    poi_to_node = dict()
+    node_list = []
+    start_node = None
 
-    map = r
+    path_count = 0
 
-    # for y in range(0,height):
-    #	for x in range(0,width):
-    #		print(map[x][y],end='')
-    #	print()
+    for y in range(0,GRID_SIZE+1):
 
-    print_map(map)
+        for x in range(0,GRID_SIZE+1):
+            ch = grid[y][x]
+            if ch == '#':
+                print(' ', end='')
+            else:
+                edges = []
+                for (x1,y1) in neighbors(x,y):
+                    n_ch = grid[y1][x1]
+                    if n_ch is not WALL:
+                        edges.append((x1,y1))
+                n = Node((x,y), ch, edges)
+                coord_to_node[(x,y)] = n
+                node_list.append(n)
+                if ch == '@':
+                    print('!', end='')
+                    start_node = n
+                    poi_to_node[(x,y)] = n
+                elif ch in KEYS:
+                    print('k', end='')
+                    # print(f'key : {ch} at {(x,y)}')
+                    key_list.append(n)
+                    # print(f'key  node {n} adding {ch} @ {(x,y)} to poi')
+                    poi_to_node[ch] = n
+                elif ch in DOORS:
+                    print('d', end='')
+                    # print(f'door: {ch} at {(x, y)}')
+                    door_list.append(n)
+                    # print(f'door node {n} adding {ch} @ {(x, y)} to poi')
+                    poi_to_node[ch] = n
+                else:
+                   assert(ch == '.')
+                print('.', end='')
+        print()
+
+    print(f'poi_to_node: {poi_to_node} \n len(poi_to_node: {len(poi_to_node)})')
+    for k in KEYS:
+        p = poi_to_node[k]
+        print(f'key {k}: {p}')
+    print(f'key_list  ({len(key_list)} elms): {key_list}')
+    print(list(map(lambda n: n.value, key_list )))
+    print(f'door_list ({len(door_list)} elms): {door_list}')
+    print(list(map(lambda n: n.value, key_list)))
+    print(f'startnode: {start_node}')
+
 
     return None
-
 def part2(all_file):
     return None
 
