@@ -1,4 +1,4 @@
-
+import heapq
 from collections import defaultdict, deque
 from string import ascii_lowercase, ascii_uppercase
 
@@ -26,13 +26,22 @@ def print_grid(g):
         print()
 
 neighbor_deltas = [(1,0), (-1,0), (0,1), (0,-1)]
+
+def uneighbors(grid,x,y,):
+    result = []
+    if grid[x][y] == WALL:
+        return result
+    n_coords =  map(lambda d: (x+d[0],y+d[1]), neighbor_deltas)
+    result = list(n_coords)
+    return tuple(result)
+
 def neighbors(grid,x,y,):
     result = []
     if grid[x][y] == WALL:
         return result
     n_coords = filter(lambda coord: grid[coord[0]][coord[1]] != WALL, map(lambda d: (x+d[0],y+d[1]), neighbor_deltas))
     result = list(n_coords)
-    return result
+    return tuple(result)
 
 
 
@@ -63,7 +72,8 @@ def reachable_keys(grid,sx, sy, keys):
 def part1(lines):
     print("\n part 1")
 
-    entrance=None
+
+    entrance = None
     key_coords = []
     door_coords = []
     poi_value_to_coords = dict()
@@ -84,11 +94,38 @@ def part1(lines):
                 else:
                     print("unknown POI character: {}".format(ch))
                     return None
-            grid[x][y] = ch
+            grid[y][x] = ch
+    print(entrance)
+    (w,h) = (GRID_SIZE,GRID_SIZE)
+    (x,y) = entrance
 
-        start_state = (0,           # steps taken
-                       entrance,    # current location
-                       set())       # keys collected
+    pos = (
+        (x - 1, y - 1),
+        (x + 1, y - 1),
+        (x - 1, y + 1),
+        (x + 1, y + 1),
+    )
+
+
+
+    allkeys = frozenset(ascii_lowercase)
+#    r = reachable_keys(grid, entrance[0], entrance[1], set())
+    q = [(0, pos, frozenset())]
+    seen = set()
+    while q:
+        # distance, current pos, keys collected
+        d, cpos, keys = heapq.heappop(q)
+        if keys == allkeys:
+            print(d)
+            break
+        if (cpos, keys) in seen:
+            continue
+        seen.add((cpos, keys))
+
+        for (i, (cx,cy)) in enumerate(cpos):
+            for l, nx, ny, key in reachable_keys(grid,cx,cy,keys):
+                npos = cpos[0:i] + ((nx, ny),) + cpos[i+1:]
+                heapq.heappush(q, (d+l, npos, keys | frozenset([key])))
 
 
 
